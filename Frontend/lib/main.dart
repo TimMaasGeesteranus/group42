@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ho_pla/util/ho_pla_scaffold.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,13 +10,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'HoPla Demo',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('HoPla Demo'),
-        ),
-        body: const Center(child: Text("HoPla demo"),),
+      home: HoPlaScaffold("HoPla Demo", Center(child: Text("HoPla demo"),),
       ),
     );
   }
