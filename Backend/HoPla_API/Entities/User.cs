@@ -25,5 +25,15 @@ namespace HoPla_API.Entities
         [Required]
         public House House { get; set; }
 
+        public User() { }
+
+        public User(string email, string name, string password, bool hasPremium, House house)
+        {
+            Email = email;
+            Name = name;
+            Password = password;
+            HasPremium = hasPremium;
+            House = house;
+        }
     }
 }

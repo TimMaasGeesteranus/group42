@@ -16,11 +16,13 @@ namespace HoPla_API.Entities
         public bool HasPremium { get; set; }
 
         [Required]
-        public ICollection<User> Users { get; set; }
-
-        [Required]
         [AllowNull]
-        public ICollection<Item> Item { get; set; }
+        public ICollection<Item> Items { get; set; }
 
+        public House(string name, bool hasPremium)
+        {
+            Name = name;
+            HasPremium = hasPremium;
+        }
     }
 }
