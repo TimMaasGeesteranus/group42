@@ -1,3 +1,4 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:ho_pla/views/profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,10 +20,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'HoPla Demo',
-      theme: darkMode ? ThemeData.dark() : ThemeData.light(),
-      home: ProfileWidget(),
-    );
+    return ThemeProvider(
+        initTheme: darkMode ? ThemeData.dark() : ThemeData.light(),
+        builder: (context, myTheme) {
+          return MaterialApp(
+            title: 'HoPla Demo',
+            theme: myTheme,
+            home: ProfileWidget(),
+          );
+        });
   }
 }
