@@ -34,16 +34,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                       child: ThemeSwitcher(builder: (context) {
                         return CheckboxListTile(
                           value: darkMode,
-                          onChanged: (newValue) {
-                            setState(() {
-                              darkMode = newValue ?? darkMode;
-                            });
-                            save();
-                            ThemeSwitcher.of(context).changeTheme(
-                                theme: darkMode
-                                    ? ThemeData.dark()
-                                    : ThemeData.light());
-                          },
+                          onChanged: switchTheme,
                           title: const Text("Dark mode"),
                         );
                       }),
@@ -54,6 +45,15 @@ class _ProfileWidgetState extends State<ProfileWidget> {
             ));
       },
     ));
+  }
+
+  void switchTheme(bool? newValue) {
+    setState(() {
+      darkMode = newValue ?? darkMode;
+    });
+    save();
+    ThemeSwitcher.of(context)
+        .changeTheme(theme: darkMode ? ThemeData.dark() : ThemeData.light());
   }
 
   void save() async {
