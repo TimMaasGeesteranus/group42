@@ -60,6 +60,7 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
 
   @override
   void initState() {
+    super.initState();
     fetchReservationsFuture = fetchReservations();
   }
 
