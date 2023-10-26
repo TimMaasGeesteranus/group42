@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ho_pla/views/login.dart';
+import 'package:ho_pla/views/schedule.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,9 +10,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'HoPla Demo',
-      home: LoginWidget(),
+      theme: ThemeData.dark(),
+      home: ScheduleWidget(),
     );
   }
 }
