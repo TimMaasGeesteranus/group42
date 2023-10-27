@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:ho_pla/util/ho_pla_scaffold.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfileWidget extends StatefulWidget {
-  const ProfileWidget({super.key});
+class SettingsWidget extends StatefulWidget {
+  const SettingsWidget({super.key});
 
   @override
-  State<ProfileWidget> createState() => _ProfileWidgetState();
+  State<SettingsWidget> createState() => _SettingsWidgetState();
 }
 
-class _ProfileWidgetState extends State<ProfileWidget> {
+class _SettingsWidgetState extends State<SettingsWidget> {
   bool darkMode = true;
 
   @override
@@ -18,7 +18,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     return ThemeSwitchingArea(child: Builder(
       builder: (context) {
         return HoPlaScaffold(
-            "Profile",
+            "Settings",
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
               child: Column(

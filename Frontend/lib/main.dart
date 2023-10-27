@@ -1,6 +1,6 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
-import 'package:ho_pla/views/profile.dart';
+import 'package:ho_pla/views/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'HoPla Demo',
             theme: myTheme,
-            home: ProfileWidget(),
+            home: SettingsWidget(),
           );
         });
   }
