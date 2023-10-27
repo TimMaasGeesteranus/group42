@@ -103,6 +103,29 @@ namespace HoPla_API.Controllers
             return BadRequest("Invalid username or password");
         }
 
+        [HttpDelete("delete_user/{userId}")]
+        public async Task<IActionResult> DeleteReservation(int userId)
+        {
+            try
+            {
+                User user = _appDbContext.Users.FirstOrDefault(u => u.Id == userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                _appDbContext.Users.Remove(user);
+                await _appDbContext.SaveChangesAsync();
+
+                return Ok($"User {user.Id} deleted.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.InnerException.Message);
+            }
+        }
+
         [HttpPost("assign-house/{userId}/{houseId}")]
         public async Task<IActionResult> AssignHouseToUser(int userId, int houseId)
         {
