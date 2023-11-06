@@ -31,6 +31,8 @@ class CustomImagePickerState extends State<CustomImagePicker> {
                     setState(() {
                       selectedImage = widget.imagePaths[index];
                     });
+                    // TODO: send request to change image here
+                    Navigator.pop(context, widget.imagePaths[index]);
                   },
                   child: Container(
                     margin: EdgeInsets.all(8),
