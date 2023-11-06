@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ho_pla/util/ho_pla_scaffold.dart';
 
 class CustomImagePicker extends StatefulWidget {
-  final List<String> imagePaths; // List of asset paths to your images
+  final List<String> imagePaths;
 
   const CustomImagePicker({super.key, required this.imagePaths});
 
@@ -11,7 +11,6 @@ class CustomImagePicker extends StatefulWidget {
 }
 
 class CustomImagePickerState extends State<CustomImagePicker> {
-  String? selectedImage;
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +27,6 @@ class CustomImagePickerState extends State<CustomImagePicker> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    setState(() {
-                      selectedImage = widget.imagePaths[index];
-                    });
                     // TODO: send request to change image here
                     Navigator.pop(context, widget.imagePaths[index]);
                   },
@@ -43,24 +39,12 @@ class CustomImagePickerState extends State<CustomImagePicker> {
                         image: AssetImage(widget.imagePaths[index]),
                         fit: BoxFit.cover,
                       ),
-                      border: Border.all(
-                        color: selectedImage == widget.imagePaths[index]
-                            ? Colors.blue
-                            : Colors.transparent,
-                        width: 2,
-                      ),
                     ),
                   ),
                 );
               },
             ),
           ),
-          if (selectedImage != null)
-            Image.asset(
-              selectedImage!,
-              width: 200,
-              height: 200,
-            ),
         ],
       ),
     );
