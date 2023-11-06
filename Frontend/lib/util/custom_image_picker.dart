@@ -35,7 +35,7 @@ class CustomImagePickerState extends State<CustomImagePicker> {
                     Navigator.pop(context, widget.imagePaths[index]);
                   },
                   child: Container(
-                    margin: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
