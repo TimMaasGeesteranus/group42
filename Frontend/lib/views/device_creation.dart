@@ -65,7 +65,6 @@ class _DeviceCreationWidgetState extends State<DeviceCreationWidget> {
 
   onChangeIconClicked() async {
     final imagePaths = await getImagesInAssets();
-    debugPrint(imagePaths.toString());
 
     // Needed because of build context async gap
     if (!mounted) return;
