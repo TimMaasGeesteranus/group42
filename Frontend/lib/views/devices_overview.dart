@@ -41,9 +41,8 @@ class _DevicesOverviewWidgetState extends State<DevicesOverviewWidget> {
                 itemBuilder: (BuildContext context, int index) {
                   if (index < widget.house.items.length) {
                     // TODO: get actual image here
-                    return DevicePreviewWidget(
-                        const AssetImage("assets/icons/washing-machine.png"),
-                        widget.house.items[index].name);
+                    return DevicePreviewWidget(widget.house.items[index],
+                        const AssetImage("assets/icons/washing-machine.png"));
                   } else {
                     // Create card that allows the user to create a new device here
                     return AddDeviceWidget(widget.house);
