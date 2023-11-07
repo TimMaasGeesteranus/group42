@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:ho_pla/model/house.dart';
+import 'package:ho_pla/model/house_change_notifier.dart';
+import 'package:ho_pla/model/item.dart';
 import 'package:ho_pla/views/device_creation.dart';
+import 'package:provider/provider.dart';
 
 class AddDeviceWidget extends StatefulWidget {
-  final House house;
-
-  const AddDeviceWidget(this.house, {super.key});
+  const AddDeviceWidget({super.key});
 
   @override
   State<AddDeviceWidget> createState() => _AddDeviceWidgetState();
@@ -36,10 +36,17 @@ class _AddDeviceWidgetState extends State<AddDeviceWidget> {
     );
   }
 
-  onAddDeviceClicked() {
-    Navigator.push(
+  onAddDeviceClicked() async {
+    var provider = Provider.of<HouseChangeNotifier>(context, listen: false);
+    Item device = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => DeviceCreationWidget(widget.house)));
+            builder: (context) => ChangeNotifierProvider(
+                  child: const DeviceCreationWidget(),
+                  create: (c) => provider,
+                )));
+
+    provider.house.items.add(device);
+    provider.houseModified();
   }
 }
