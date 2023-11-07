@@ -20,6 +20,9 @@ class _DeviceCreationWidgetState extends State<DeviceCreationWidget> {
   AssetImage img = AssetImage("assets/icons/washing-machine.png");
   TextEditingController nameController = TextEditingController();
 
+  /// This is used to hide the hint after the user changed the image
+  bool promptTapToChange = true;
+
   @override
   Widget build(BuildContext context) {
     return HoPlaScaffold(
@@ -37,7 +40,7 @@ class _DeviceCreationWidgetState extends State<DeviceCreationWidget> {
                   alignment: AlignmentDirectional.center,
                   children: [
                     Image(image: img, fit: BoxFit.fill),
-                    const Text("Tap to change"),
+                    if (promptTapToChange) const Text("Tap to change"),
                   ],
                 ),
               ),
@@ -77,6 +80,7 @@ class _DeviceCreationWidgetState extends State<DeviceCreationWidget> {
 
     // Replace the image with the newly selected
     setState(() {
+      promptTapToChange = false;
       img = AssetImage(newImagePath);
     });
   }
