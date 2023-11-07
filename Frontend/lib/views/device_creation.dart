@@ -6,11 +6,11 @@ import 'package:ho_pla/model/house_change_notifier.dart';
 import 'package:ho_pla/model/item.dart';
 import 'package:ho_pla/util/custom_image_picker.dart';
 import 'package:ho_pla/util/ho_pla_scaffold.dart';
-import 'package:provider/provider.dart';
 
 class DeviceCreationWidget extends StatefulWidget {
+  final HouseChangeNotifier notifier;
 
-  const DeviceCreationWidget({super.key});
+  const DeviceCreationWidget(this.notifier, {super.key});
 
   @override
   State<DeviceCreationWidget> createState() => _DeviceCreationWidgetState();
@@ -90,7 +90,7 @@ class _DeviceCreationWidgetState extends State<DeviceCreationWidget> {
     Item device = Item(
         id: 0,
         name: nameController.text,
-        house: Provider.of<HouseChangeNotifier>(context, listen: false).house,
+        house: widget.notifier.house,
         reservations: []);
 
     // TODO: send request to create item

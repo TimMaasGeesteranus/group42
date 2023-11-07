@@ -41,10 +41,8 @@ class _AddDeviceWidgetState extends State<AddDeviceWidget> {
     Item device = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => ChangeNotifierProvider(
-                  child: const DeviceCreationWidget(),
-                  create: (c) => provider,
-                )));
+          builder: (context) => DeviceCreationWidget(provider),
+        ));
 
     provider.house.items.add(device);
     provider.houseModified();
