@@ -16,14 +16,12 @@ namespace HoPla_API.Entities
         public string Name { get; set; }
 
         [Required]
-        [MaxLength(20)]
         public string Password { get; set; }
 
         [Required]
         public bool HasPremium { get; set; }
 
-        [Required]
-        public House House { get; set; }
+        public House? House { get; set; }
 
         public User() { }
 
@@ -35,5 +33,18 @@ namespace HoPla_API.Entities
             HasPremium = hasPremium;
             House = house;
         }
+    }
+
+    public class RegisterModel
+    {
+        public string Email { get; set; }
+        public string Name { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class LoginModel
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }
