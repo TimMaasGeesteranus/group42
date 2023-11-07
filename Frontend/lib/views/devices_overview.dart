@@ -4,6 +4,7 @@ import 'package:ho_pla/model/house_change_notifier.dart';
 import 'package:ho_pla/util/device_preview.dart';
 import 'package:ho_pla/util/ho_pla_scaffold.dart';
 import 'package:ho_pla/views/add_device.dart';
+import 'package:ho_pla/views/my_house.dart';
 import 'package:provider/provider.dart';
 
 class DevicesOverviewWidget extends StatefulWidget {
@@ -64,5 +65,8 @@ class _DevicesOverviewWidgetState extends State<DevicesOverviewWidget> {
         ));
   }
 
-  void onInformationButtonClicked() {}
+  void onInformationButtonClicked() {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const MyHouseWidget()));
+  }
 }
