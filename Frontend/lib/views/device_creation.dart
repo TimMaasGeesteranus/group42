@@ -24,40 +24,36 @@ class _DeviceCreationWidgetState extends State<DeviceCreationWidget> {
   Widget build(BuildContext context) {
     return HoPlaScaffold(
       "Create new item",
-      Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: onChangeIconClicked,
-                child: Container(
-                  width: 200,
-                  height: 200,
-                  child: Stack(
-                    alignment: AlignmentDirectional.center,
-                    children: [
-                      Image(image: img, fit: BoxFit.fill),
-                      const Text("Tap to change"),
-                    ],
-                  ),
+      Center(
+        child: ListView(
+          padding: const EdgeInsets.all(60.0),
+          children: [
+            GestureDetector(
+              onTap: onChangeIconClicked,
+              child: Container(
+                width: 200,
+                height: 200,
+                child: Stack(
+                  alignment: AlignmentDirectional.center,
+                  children: [
+                    Image(image: img, fit: BoxFit.fill),
+                    const Text("Tap to change"),
+                  ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: "Device name",
-                    border: OutlineInputBorder(),
-                  ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  labelText: "Device name",
+                  border: OutlineInputBorder(),
                 ),
               ),
-              TextButton(onPressed: onSaveClicked, child: const Text("Save"))
-            ],
-          ),
+            ),
+            TextButton(onPressed: onSaveClicked, child: const Text("Save"))
+          ],
         ),
       ),
     );
