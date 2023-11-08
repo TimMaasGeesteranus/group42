@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import '../model/item.dart';
 import '../util/ho_pla_scaffold.dart';
 
 class ScheduleWidget extends StatefulWidget {
-  const ScheduleWidget({super.key});
+  final Item item;
+
+  const ScheduleWidget(this.item, {super.key});
 
   @override
   State<ScheduleWidget> createState() => _ScheduleWidgetState();
