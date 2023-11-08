@@ -52,7 +52,6 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                 ),
               ),
               Container(
-                color: Theme.of(context).cardColor,
                 width: double.infinity,
                 margin:
                     const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
@@ -60,7 +59,6 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                     onPressed: onClickSettings, child: const Text("Settings")),
               ),
               Container(
-                color: Theme.of(context).cardColor,
                 width: double.infinity,
                 margin: const EdgeInsets.symmetric(horizontal: 30),
                 child: TextButton(
@@ -69,7 +67,6 @@ class _ProfileWidgetState extends State<ProfileWidget> {
               ),
               //const Spacer(),
               Container(
-                color: Theme.of(context).cardColor,
                 width: double.infinity,
                 margin: const EdgeInsets.only(
                     bottom: 20, left: 30, right: 30, top: 60),
