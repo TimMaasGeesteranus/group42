@@ -1,5 +1,8 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
+import 'package:ho_pla/views/add_device.dart';
+import 'package:ho_pla/views/device_creation.dart';
+import 'package:ho_pla/views/new_house.dart';
 import 'package:ho_pla/views/profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,7 +29,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'HoPla Demo',
             theme: myTheme,
-            home: ProfileWidget(),
+            home: NewHouseWidget(),
           );
         });
   }
