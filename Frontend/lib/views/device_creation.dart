@@ -91,7 +91,8 @@ class _DeviceCreationWidgetState extends State<DeviceCreationWidget> {
         id: 0,
         name: nameController.text,
         house: widget.notifier.house,
-        reservations: []);
+        reservations: [],
+        image: "washing-machine");
 
     // TODO: send request to create item
     Navigator.pop(context, device);
