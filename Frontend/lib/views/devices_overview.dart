@@ -44,14 +44,11 @@ class _DevicesOverviewWidgetState extends State<DevicesOverviewWidget> {
                       crossAxisSpacing: 10,
                       //childAspectRatio: 0.8
                     ),
-                    itemCount: (notifier.house.items.length ?? 0) + 1,
+                    itemCount: (notifier.house.items.length) + 1,
                     itemBuilder: (BuildContext context, int index) {
                       if (index < notifier.house.items.length) {
-                        // TODO: get actual image here
-                        return DevicePreviewWidget(
-                            notifier.house.items[index],
-                            const AssetImage(
-                                "assets/icons/washing-machine.png"));
+                        return DevicePreviewWidget(notifier.house.items[index],
+                            AssetImage(notifier.house.items[index].image));
                       } else {
                         // Create card that allows the user to create a new device here
                         return const AddDeviceWidget();

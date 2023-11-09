@@ -17,7 +17,7 @@ class DeviceCreationWidget extends StatefulWidget {
 }
 
 class _DeviceCreationWidgetState extends State<DeviceCreationWidget> {
-  AssetImage img = AssetImage("assets/icons/washing-machine.png");
+  String imgPath = "assets/icons/washing-machine.png";
   TextEditingController nameController = TextEditingController();
 
   /// This is used to hide the hint after the user changed the image
@@ -39,7 +39,7 @@ class _DeviceCreationWidgetState extends State<DeviceCreationWidget> {
                 child: Stack(
                   alignment: AlignmentDirectional.center,
                   children: [
-                    Image(image: img, fit: BoxFit.fill),
+                    Image(image: AssetImage(imgPath), fit: BoxFit.fill),
                     if (promptTapToChange) const Text("Tap to change"),
                   ],
                 ),
@@ -81,7 +81,7 @@ class _DeviceCreationWidgetState extends State<DeviceCreationWidget> {
     // Replace the image with the newly selected
     setState(() {
       promptTapToChange = false;
-      img = AssetImage(newImagePath);
+      imgPath = newImagePath;
     });
   }
 
@@ -92,7 +92,7 @@ class _DeviceCreationWidgetState extends State<DeviceCreationWidget> {
         name: nameController.text,
         house: widget.notifier.house,
         reservations: [],
-        image: "washing-machine");
+        image: imgPath);
 
     // TODO: send request to create item
     Navigator.pop(context, device);
