@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:ho_pla/util/backend.dart';
 import 'package:ho_pla/views/join_house.dart';
 
 class LoginWidget extends StatefulWidget {
@@ -10,19 +11,36 @@ class LoginWidget extends StatefulWidget {
 }
 
 class LoginWidgetState extends State<LoginWidget> {
-  Future<String?> _authUser(LoginData data) {
-    // TODO: login auth logic
-    throw UnimplementedError();
+  Future<String?> _authUser(LoginData data) async {
+    var res = await Backend.login(data.name, data.password);
+    debugPrint("Login status: ${res.statusCode.toString()}");
+
+    if (res.statusCode == 200) {
+      Backend.saveUserIdByResponse(res);
+      return null;
+    } else {
+      return res.body;
+    }
   }
 
-  Future<String?> _signupUser(SignupData data) {
-    // TODO: login register logic
-    throw UnimplementedError();
+  /// Called on signup user. Returns the message fpr the user if not successful.
+  /// Returning null means success.
+  Future<String?> _signupUser(SignupData data) async {
+    var res = await Backend.register(
+        data.name!, data.additionalSignupData!["name"]!, data.password!);
+    debugPrint("Register status: ${res.statusCode.toString()}");
+
+    if (res.statusCode == 200) {
+      Backend.saveUserIdByResponse(res);
+      return null;
+    } else {
+      return res.body;
+    }
   }
 
-  Future<String?> _recoverPassword(String name) {
+  Future<String?> _recoverPassword(String name) async {
     // TODO: login recover password logic
-    throw UnimplementedError();
+    return "This service is not available right now";
   }
 
   @override
@@ -45,7 +63,7 @@ class LoginWidgetState extends State<LoginWidget> {
       ],
       messages: LoginMessages(
         additionalSignUpFormDescription:
-            "This wil be the name that is displayed for others:",
+        "This wil be the name that is displayed for others:",
       ),
     );
   }
