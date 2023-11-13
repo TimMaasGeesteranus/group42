@@ -16,7 +16,7 @@ class LoginWidgetState extends State<LoginWidget> {
     debugPrint("Login status: ${res.statusCode.toString()}");
 
     if (res.statusCode == 200) {
-      Backend.saveUserIdByResponse(res);
+      Backend.saveAndSetUserIdByResponse(res);
       return null;
     } else {
       return res.body;
@@ -31,7 +31,7 @@ class LoginWidgetState extends State<LoginWidget> {
     debugPrint("Register status: ${res.statusCode.toString()}");
 
     if (res.statusCode == 200) {
-      Backend.saveUserIdByResponse(res);
+      Backend.saveAndSetUserIdByResponse(res);
       return null;
     } else {
       return res.body;

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:ho_pla/util/current_user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,13 +43,14 @@ class Backend {
     );
   }
 
-  static void saveUserIdByResponse(http.Response res) async {
+  static void saveAndSetUserIdByResponse(http.Response res) async {
     final Map<String, dynamic> responseData = json.decode(res.body);
     final String? userId = responseData['id'];
 
     if (userId != null) {
       final preferences = await SharedPreferences.getInstance();
       preferences.setString("userid", userId);
+      CurrentUser.id = userId;
     } else {
       debugPrint("Error: did not receive a userId after OK 200 response.");
     }
