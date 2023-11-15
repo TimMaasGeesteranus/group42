@@ -30,23 +30,5 @@ namespace HoPla_API.Controllers
             }
             return BadRequest("Input must be int");
         }
-
-        [HttpGet("{id}")]
-        public IActionResult GetItemByHouseId(string id)
-        {
-            if (int.TryParse(id, out var houseId))
-            {
-                try
-                {
-                    Item item = _appDbContext.Items.Single(x => x.Id == itemId);
-                    return Ok(item);
-                }
-                catch
-                {
-                    return NotFound("No item found");
-                }
-            }
-            return BadRequest("Input must be int");
-        }
     }
 }
