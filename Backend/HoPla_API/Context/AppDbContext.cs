@@ -22,7 +22,7 @@ namespace HoPla_API.Context
         public void Seed()
         {
 
-            House h1 = new("MyHouse", false);
+            House h1 = new("MyHouse", false);   
             House h2 = new("MyOtherHouse", false);
 
 
