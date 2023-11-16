@@ -15,7 +15,8 @@ namespace HoPla_API.Entities
         [Required]
         public bool HasPremium { get; set; }
 
-        [Required]
+        public int? HouseSize { get; set; }
+
         [AllowNull]
         public ICollection<Item> Items { get; set; }
 
@@ -23,6 +24,17 @@ namespace HoPla_API.Entities
         {
             Name = name;
             HasPremium = hasPremium;
+            Items = new List<Item>();
         }
+    }
+
+    public class HouseInputModel
+    {
+        [MaxLength(50)]
+        public string Name { get; set; }
+
+        public bool HasPremium { get; set; }
+
+        public int? HouseSize { get; set; }
     }
 }
