@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class Backend {
   // Use alias for localhost
@@ -50,6 +51,33 @@ class Backend {
         'Content-Type': 'application/json',
         'accept': '*/*',
       },
+    );
+  }
+
+  static Future<http.Response> getItemsByHouseId(String houseId) {
+    return http.get(
+      Uri.parse('$host/items/get_items_by_house_id/$houseId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+    );
+  }
+
+  static Future<http.Response> addReservation(
+      String userId, String itemId, Appointment reservation) {
+    final jsonData = {
+      'StartTime': reservation.startTime,
+      'EndTime': reservation.endTime,
+    };
+
+    return http.post(
+      Uri.parse('$host/items/create-reservation/$userId/$itemId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: json.encode(jsonData),
     );
   }
 
