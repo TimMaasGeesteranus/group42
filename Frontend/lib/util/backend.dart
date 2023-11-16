@@ -43,6 +43,16 @@ class Backend {
     );
   }
 
+  static Future<http.Response> getHouseById(String houseId) {
+    return http.get(
+      Uri.parse('$host/House/$houseId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+    );
+  }
+
   static void saveAndSetUserIdByResponse(http.Response res) async {
     final Map<String, dynamic> responseData = json.decode(res.body);
     final String? userId = responseData['id'];
