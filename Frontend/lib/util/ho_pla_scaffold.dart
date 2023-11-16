@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ho_pla/views/profile.dart';
 
 /// A basic scaffold. It only has a navigation button if a page can be popped.
 /// Allows custom title and body.
@@ -25,7 +26,10 @@ class HoPlaScaffold extends StatelessWidget {
                 color: Colors.white,
               ),
               onPressed: () {
-                // TODO: navigate to the profile page here
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileWidget()));
               },
             )
           ],
