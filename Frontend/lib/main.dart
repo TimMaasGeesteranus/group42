@@ -4,6 +4,8 @@ import 'package:ho_pla/util/current_user.dart';
 import 'package:ho_pla/views/devices_overview.dart';
 import 'package:ho_pla/views/join_house.dart';
 import 'package:ho_pla/views/login.dart';
+import 'package:ho_pla/util/ho_pla_theme.dart';
+import 'package:ho_pla/views/profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
@@ -38,7 +40,7 @@ class MyApp extends StatelessWidget {
     }
 
     return ThemeProvider(
-        initTheme: darkMode ? ThemeData.dark() : ThemeData.light(),
+        initTheme: darkMode ? customDarkTheme : ThemeData.light(),
         builder: (context, myTheme) {
           return MaterialApp(
             title: 'HoPla Demo',
