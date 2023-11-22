@@ -83,7 +83,7 @@ class Backend {
 
   static void saveAndSetUserIdByResponse(http.Response res) async {
     final Map<String, dynamic> responseData = json.decode(res.body);
-    final String? userId = responseData['id'];
+    final String? userId = responseData['id']?.toString();
 
     if (userId != null) {
       final preferences = await SharedPreferences.getInstance();
