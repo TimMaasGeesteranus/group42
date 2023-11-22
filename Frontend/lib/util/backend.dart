@@ -93,4 +93,15 @@ class Backend {
       debugPrint("Error: did not receive a userId after OK 200 response.");
     }
   }
+
+  static Future<http.Response> getUser(String userId) {
+    // TODO: for this there exists not backend yet
+    return http.get(
+      Uri.parse('$host/users/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+    );
+  }
 }
