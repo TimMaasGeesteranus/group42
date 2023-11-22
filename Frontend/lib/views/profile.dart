@@ -20,6 +20,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   final TextEditingController _emailTextController = TextEditingController();
 
   late Future<User?> loadingFuture;
+  User? currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                 );
               } else {
                 // Data is now definitely present.
-                return buildProfilePage(snap.data!);
+                currentUser = snap.data!;
+                return buildProfilePage(currentUser!);
               }
             },
           ),
@@ -89,7 +91,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
           width: double.infinity,
           margin: const EdgeInsets.symmetric(horizontal: 30),
           child: TextButton(
-              onPressed: onClickPremium, child: const Text("Go Premium!")),
+              onPressed: () => _premiumDialogBuilder(context),
+              child: const Text("Go Premium!")),
         ),
         //const Spacer(),
         Container(
@@ -112,8 +115,60 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     // TODO: premium
   }
 
-  void onClickSave() {
-    // TODO: update backend
+  Future<void> _premiumDialogBuilder(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Buy premium'),
+          content: const Text(
+              'Here will be the buy process of the premium subscription.\n'
+              'However, this cannot be implemented yet.\n'
+              'Press Enable to get premium for testing purposes.'),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Enable'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void onClickSave() async {
+    User? toChangeUser = currentUser;
+    if (toChangeUser != null) {
+      toChangeUser.name = _nameTextController.text;
+      toChangeUser.email = _emailTextController.text;
+
+      var res = await Backend.changeUser(toChangeUser);
+      String message = res.statusCode == 200
+          ? "Successfully changed"
+          : "Error changing the user";
+
+      var snackBar = SnackBar(content: Text(message));
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    } else {
+      debugPrint("Current user is null. Cannot save.");
+    }
   }
 
   @override
