@@ -9,7 +9,7 @@ namespace HoPla_API.Controllers
 {
 
     [ApiController]
-    [Route("[controller]")]
+    [Route("users")]
     public class UserController : ControllerBase
     {
         private readonly AppDbContext _appDbContext;

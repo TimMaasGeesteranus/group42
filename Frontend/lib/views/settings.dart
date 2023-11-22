@@ -1,6 +1,7 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:ho_pla/util/ho_pla_scaffold.dart';
+import 'package:ho_pla/util/ho_pla_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsWidget extends StatefulWidget {
@@ -34,7 +35,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                       child: ThemeSwitcher(builder: (context) {
                         return CheckboxListTile(
                           value: darkMode,
-                          onChanged: switchTheme,
+                          onChanged: (x) => switchTheme(context, x),
                           title: const Text("Dark mode"),
                         );
                       }),
@@ -47,13 +48,13 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     ));
   }
 
-  void switchTheme(bool? newValue) {
+  void switchTheme(BuildContext context, bool? newValue) {
     setState(() {
       darkMode = newValue ?? darkMode;
     });
     save();
     ThemeSwitcher.of(context)
-        .changeTheme(theme: darkMode ? ThemeData.dark() : ThemeData.light());
+        .changeTheme(theme: darkMode ? customDarkTheme : ThemeData.light());
   }
 
   void save() async {
