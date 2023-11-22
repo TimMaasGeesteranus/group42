@@ -111,8 +111,12 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     }));
   }
 
-  void onClickPremium() {
-    // TODO: premium
+  void onClickPremium() async {
+    if (currentUser != null) {
+      debugPrint("Toggle premium status of user ${currentUser!.id}");
+      currentUser!.hasPremium = !currentUser!.hasPremium;
+      onClickSave();
+    }
   }
 
   Future<void> _premiumDialogBuilder(BuildContext context) {
@@ -124,7 +128,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
           content: const Text(
               'Here will be the buy process of the premium subscription.\n'
               'However, this cannot be implemented yet.\n'
-              'Press Enable to get premium for testing purposes.'),
+              'Press Toggle for testing purposes. Restart to apply.'),
           actions: <Widget>[
             TextButton(
               style: TextButton.styleFrom(
@@ -139,8 +143,9 @@ class _ProfileWidgetState extends State<ProfileWidget> {
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text('Enable'),
+              child: const Text('Toggle'),
               onPressed: () {
+                onClickPremium();
                 Navigator.of(context).pop();
               },
             ),
@@ -181,7 +186,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     Response response = await Backend.getHouseById(CurrentUser.id);
 
     if (response.statusCode != 200) {
-      debugPrint("Error: response status code != 200: ${response.statusCode}");
+      debugPrint(
+          "Error fetching user: response status code: ${response.statusCode}");
       return null;
     }
 
