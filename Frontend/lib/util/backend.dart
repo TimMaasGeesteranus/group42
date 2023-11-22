@@ -8,7 +8,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class Backend {
   // Use alias for localhost
-  static const String host = "http://192.168.0.100:7206";
+  static const String host = "http://34.245.145.71:80";
 
   static Future<http.Response> register(
       String email, String name, String password) async {
