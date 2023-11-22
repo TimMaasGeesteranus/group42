@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ho_pla/model/house_change_notifier.dart';
 import 'package:ho_pla/model/item.dart';
+import 'package:ho_pla/util/backend.dart';
 import 'package:ho_pla/util/custom_image_picker.dart';
 import 'package:ho_pla/util/ho_pla_scaffold.dart';
 
@@ -85,17 +86,34 @@ class _DeviceCreationWidgetState extends State<DeviceCreationWidget> {
     });
   }
 
-  onSaveClicked() {
-    // TODO: adjust id
-    Item device = Item(
-        id: 0,
-        name: nameController.text,
-        house: widget.notifier.house,
-        reservations: [],
-        image: imgPath);
+  onSaveClicked() async {
+    try {
+      var res = await Backend.createDevice(
+          nameController.text, widget.notifier.house.id.toString(), imgPath);
 
-    // TODO: send request to create item
-    Navigator.pop(context, device);
+      if (res.statusCode == 201) {
+        Item newDevice = jsonDecode(res.body);
+
+        if (context.mounted) {
+          // Return to device overview
+          Navigator.pop(context, newDevice);
+        }
+
+        return;
+      } else {
+        showError('Could not create the device: status ${res.statusCode}');
+      }
+    } on Exception catch (e, _) {
+      showError('Error creating the device');
+    }
+  }
+
+  void showError(String message) {
+    var snackBar = SnackBar(content: Text(message));
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   // https://stackoverflow.com/questions/56544200/flutter-how-to-get-a-list-of-names-of-all-images-in-assets-directory
