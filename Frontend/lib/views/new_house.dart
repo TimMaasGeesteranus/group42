@@ -1,5 +1,12 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:ho_pla/util/current_user.dart';
+import 'package:ho_pla/views/devices_overview.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../model/house.dart';
+import '../util/backend.dart';
 import '../util/ho_pla_scaffold.dart';
 
 class NewHouseWidget extends StatefulWidget {
@@ -10,6 +17,8 @@ class NewHouseWidget extends StatefulWidget {
 }
 
 class _NewHouseWidgetState extends State<NewHouseWidget> {
+  TextEditingController nameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return HoPlaScaffold(
@@ -22,19 +31,55 @@ class _NewHouseWidgetState extends State<NewHouseWidget> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text("Give your new House a name"),
-                const TextField(
-                  decoration: InputDecoration(
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
                     labelText: "House name",
                     border: OutlineInputBorder(),
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    print('Button Pressed');
-                  },
-                  child: const Text('Create new House'),
+                  onPressed: onCreateClicked,
+                  child: const Text('Create'),
                 )
               ],
             )));
+  }
+
+  onCreateClicked() async {
+    try {
+      var res = await Backend.createHouse(
+          nameController.text, false, 10); //TODO: Replace dummy values
+
+      if (res.statusCode == 201) {
+        House newHouse = jsonDecode(res.body);
+
+        String houseId = newHouse.id.toString();
+
+        final preferences = await SharedPreferences.getInstance();
+        preferences.setString("houseid", houseId);
+        CurrentUser.houseId = houseId;
+
+        if (context.mounted) {
+          // Return to device overview
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DevicesOverviewWidget(houseId)));
+        }
+
+
+        return;
+      } else {
+        showError('Could not create the house: status ${res.statusCode}');
+      }
+    } on Exception catch (e, _) {
+      showError('Error creating the house');
+    }
+  }
+
+  void showError(String message) {
+    var snackBar = SnackBar(content: Text(message));
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 }
