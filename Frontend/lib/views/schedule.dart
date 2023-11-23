@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:ho_pla/util/backend.dart';
+import 'package:ho_pla/util/current_user.dart';
+import 'package:http/http.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../model/item.dart';
@@ -48,8 +53,7 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
         ));
   }
 
-  void _onTap(CalendarTapDetails details) {
-    // TODO: send request, error handling
+  void _onTap(CalendarTapDetails details) async {
     var app = Appointment(
       startTime: details.date!,
       endTime: details.date!.add(const Duration(minutes: 60)),
@@ -57,8 +61,31 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
       color: Colors.blue,
     );
 
-    source.appointments?.add(app);
-    source.notifyListeners(CalendarDataSourceAction.add, [app]);
+    var res = await Backend.addReservation(
+        CurrentUser.id, widget.item.id.toString(), app);
+
+    // Find the ScaffoldMessenger in the widget tree
+    // and use it to show a SnackBar.
+
+    if (res.statusCode != 200) {
+      debugPrint(
+          "Error creating the reservation. Status code: ${res.statusCode} Body: ${res.body}");
+      const snackBar =
+          SnackBar(content: Text('Error creating the reservation'));
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    } else {
+      const snackBar = SnackBar(content: Text('Successful!'));
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+
+      source.appointments?.add(app);
+      source.notifyListeners(CalendarDataSourceAction.add, [app]);
+    }
   }
 
   @override
@@ -69,8 +96,21 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
 
   /// Async method that calls the backend
   Future<List<Appointment>> fetchReservations() async {
-    // TODO: call backend here
-    return [];
+    Response response = await Backend.getItemsByHouseId(CurrentUser.houseId);
+
+    if (response.statusCode != 200) {
+      debugPrint("Error: response status code != 200: ${response.statusCode}");
+      return [];
+    }
+
+    List<Item> items = jsonDecode(response.body);
+    Item currentItem =
+        items.firstWhere((element) => element.id == widget.item.id);
+    List<Appointment> appointments = currentItem.reservations
+        .map((e) => Appointment(startTime: e.startTime, endTime: e.endTime))
+        .toList();
+
+    return appointments;
   }
 }
 
