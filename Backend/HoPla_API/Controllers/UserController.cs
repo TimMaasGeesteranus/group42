@@ -244,13 +244,14 @@ namespace HoPla_API.Controllers
                 }
 
                 var reservation = new Reservation { 
-                    User = user, 
-                    Item = item, 
+                    User = user,
                     StartTime = reservationRequest.StartTime,
                     EndTime = reservationRequest.EndTime
                 };
 
                 _appDbContext.Reservations.Add(reservation);
+                await _appDbContext.SaveChangesAsync();
+                item.Reservations.Add(reservation);
                 await _appDbContext.SaveChangesAsync();
                 return Ok($"Reservation {reservation.Id} created for user {user.Id}");
             }
