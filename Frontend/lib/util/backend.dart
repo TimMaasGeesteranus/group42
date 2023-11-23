@@ -93,4 +93,22 @@ class Backend {
       debugPrint("Error: did not receive a userId after OK 200 response.");
     }
   }
+
+  static Future<http.Response> createDevice(
+      String name, String houseId, String image) {
+    final jsonData = {
+      'Name': name,
+      'HouseId': houseId,
+      'Image': image,
+    };
+
+    return http.post(
+      Uri.parse('$host/items/create_item'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: json.encode(jsonData),
+    );
+  }
 }
