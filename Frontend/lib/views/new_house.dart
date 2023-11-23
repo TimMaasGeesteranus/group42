@@ -21,9 +21,9 @@ class _NewHouseWidgetState extends State<NewHouseWidget> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Give your new House a name"),
-                TextField(
-                  decoration: const InputDecoration(
+                const Text("Give your new House a name"),
+                const TextField(
+                  decoration: InputDecoration(
                     labelText: "House name",
                     border: OutlineInputBorder(),
                   ),
@@ -32,7 +32,7 @@ class _NewHouseWidgetState extends State<NewHouseWidget> {
                   onPressed: () {
                     print('Button Pressed');
                   },
-                  child: Text('Create new House'),
+                  child: const Text('Create new House'),
                 )
               ],
             )));
