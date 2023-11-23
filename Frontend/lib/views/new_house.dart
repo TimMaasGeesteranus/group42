@@ -48,27 +48,32 @@ class _NewHouseWidgetState extends State<NewHouseWidget> {
 
   onCreateClicked() async {
     try {
-      var res = await Backend.createHouse(
-          nameController.text, false, 10); //TODO: Replace dummy values
+      if (nameController.text.isEmpty) {
+        showError("Name cannot be empty");
+      }
+      else {
+        var res = await Backend.createHouse(
+            nameController.text, false, 10); //TODO: Replace dummy values
 
-      if (res.statusCode == 201) {
-        House newHouse = jsonDecode(res.body);
+        if (res.statusCode == 201) {
+          House newHouse = House.fromJson(jsonDecode(res.body));
 
-        String houseId = newHouse.id.toString();
+          String houseId = newHouse.id.toString();
 
-        final preferences = await SharedPreferences.getInstance();
-        preferences.setString("houseid", houseId);
-        CurrentUser.houseId = houseId;
+          final preferences = await SharedPreferences.getInstance();
+          preferences.setString("houseid", houseId);
+          CurrentUser.houseId = houseId;
 
-        if (context.mounted) {
-          // Return to device overview
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DevicesOverviewWidget(houseId)));
+          if (context.mounted) {
+            // Return to device overview
+            Navigator.pushReplacement(context, MaterialPageRoute(
+                builder: (context) => DevicesOverviewWidget(houseId)));
+          }
+
+          return;
+        } else {
+          showError('Could not create the house: status ${res.statusCode}');
         }
-
-
-        return;
-      } else {
-        showError('Could not create the house: status ${res.statusCode}');
       }
     } on Exception catch (e, _) {
       showError('Error creating the house');
