@@ -15,25 +15,7 @@ namespace HoPla_API.Context
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
-            Seed();
             Database.EnsureCreated();
-        }
-
-        public void Seed()
-        {
-
-            House h1 = new("MyHouse", false);
-            House h2 = new("MyOtherHouse", false);
-
-
-            User u1 = new("mail@mail.com", "User1", "secret", false, h1);
-
-            Houses.Add(h1);
-            Houses.Add(h2);
-            Users.Add(u1);
-
-
-            SaveChanges();
         }
     }
 }
