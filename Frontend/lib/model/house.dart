@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'User.dart';
+import 'hopla_user.dart';
 import 'item.dart';
 
 part 'house.g.dart';
