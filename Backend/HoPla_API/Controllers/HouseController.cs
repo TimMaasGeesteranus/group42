@@ -1,6 +1,7 @@
 ﻿using HoPla_API.Context;
 using HoPla_API.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HoPla_API.Controllers
 {
@@ -22,7 +23,7 @@ namespace HoPla_API.Controllers
             {
                 try
                 {
-                    House house = _appDbContext.Houses.Single(x => x.Id == houseId);
+                    House house = _appDbContext.Houses.Include(h => h.Items).Single(x => x.Id == houseId);
                     return Ok(house);
                 }
                 catch 
