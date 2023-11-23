@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'house.dart';
 
-part 'user.g.dart';
+part 'hopla_user.g.dart';
 
 @JsonSerializable()
 class User {
