@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:ho_pla/model/hopla_user.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -109,6 +110,28 @@ class Backend {
         'accept': '*/*',
       },
       body: json.encode(jsonData),
+    );
+  }
+
+  static Future<http.Response> getUser(String userId) {
+    // TODO: for this there exists not backend yet
+    return http.get(
+      Uri.parse('$host/users/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+    );
+  }
+
+  static Future<http.Response> changeUser(User changedUser) {
+    return http.put(
+      Uri.parse('$host/users/edit-user/${changedUser.id}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: jsonEncode(changedUser),
     );
   }
 }
