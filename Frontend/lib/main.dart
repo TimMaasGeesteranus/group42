@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:ho_pla/util/ho_pla_theme.dart';
 import 'package:ho_pla/views/devices_overview.dart';
-import 'package:ho_pla/views/join_house.dart';
 import 'package:ho_pla/views/login.dart';
+import 'package:ho_pla/views/new_house.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
     if (CurrentUser.id == "") {
       firstWidget = const LoginWidget();
     } else if (CurrentUser.houseId == "") {
-      firstWidget = const JoinHouseWidget();
+      firstWidget = const NewHouseWidget();
     } else {
       firstWidget = DevicesOverviewWidget(CurrentUser.houseId);
     }
