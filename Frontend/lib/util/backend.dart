@@ -6,6 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import '../model/hopla_user.dart';
+import '../model/item.dart';
+
 import '../model/hopla_update_user.dart';
 
 class Backend {
@@ -107,6 +110,24 @@ class Backend {
 
     return http.post(
       Uri.parse('$host/items/create_item'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: json.encode(jsonData),
+    );
+  }
+
+  static Future<http.Response> createHouse(
+      String name, bool hasPremium, int houseSize) {
+    final jsonData = {
+      'Name': name,
+      'HasPremium' : hasPremium,
+      'HouseSize' : houseSize
+    };
+
+    return http.post(
+      Uri.parse('$host/house'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
