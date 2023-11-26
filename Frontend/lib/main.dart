@@ -15,7 +15,7 @@ Future<void> main() async {
   final bool darkMode = preferences.getBool('darkmode') ?? false;
   // Set current user id if available
   CurrentUser.id = preferences.getString('userid') ?? "";
-  CurrentUser.houseId = preferences.getString('houseid') ?? "1";
+  CurrentUser.houseId = preferences.getString('houseid') ?? "";
 
   runApp(MyApp(darkMode: darkMode));
 }
