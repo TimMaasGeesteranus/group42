@@ -6,9 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-import '../model/hopla_user.dart';
-import '../model/item.dart';
-
 import '../model/hopla_update_user.dart';
 
 class Backend {
@@ -24,7 +21,7 @@ class Backend {
     };
 
     return http.post(
-      Uri.parse('$host/User/register'),
+      Uri.parse('$host/Users/register'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
@@ -40,7 +37,7 @@ class Backend {
     };
 
     return http.post(
-      Uri.parse('$host/User/login'),
+      Uri.parse('$host/Users/login'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
