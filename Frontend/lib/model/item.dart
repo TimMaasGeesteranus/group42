@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'house.dart';
 import 'reservation.dart';
 
 part 'item.g.dart';
@@ -9,17 +8,16 @@ part 'item.g.dart';
 class Item {
   int id;
   String name;
-  House house;
-  List<Reservation> reservations;
+  List<Reservation>? reservations;
   String image;
+  String? qrcode;
 
-  Item({
-    required this.id,
-    required this.name,
-    required this.house,
-    required this.reservations,
-    required this.image,
-  });
+  Item(
+      {required this.id,
+      required this.name,
+      required this.reservations,
+      required this.image,
+      required this.qrcode});
 
   factory Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
 

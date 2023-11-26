@@ -92,7 +92,8 @@ class _DeviceCreationWidgetState extends State<DeviceCreationWidget> {
           nameController.text, widget.notifier.house.id.toString(), imgPath);
 
       if (res.statusCode == 201) {
-        Item newDevice = jsonDecode(res.body);
+        debugPrint("Got ${res.body}");
+        Item newDevice = Item.fromJson(jsonDecode(res.body));
 
         if (context.mounted) {
           // Return to device overview
