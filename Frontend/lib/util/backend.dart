@@ -1,11 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:ho_pla/model/hopla_user.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+
+import '../model/hopla_update_user.dart';
 
 class Backend {
   // Use alias for localhost
@@ -115,9 +116,8 @@ class Backend {
   }
 
   static Future<http.Response> getUser(String userId) {
-    // TODO: for this there exists not backend yet
     return http.get(
-      Uri.parse('$host/users/$userId'),
+      Uri.parse('$host/users/get_user_by_id/$userId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
@@ -125,9 +125,10 @@ class Backend {
     );
   }
 
-  static Future<http.Response> changeUser(User changedUser) {
+  static Future<http.Response> changeUser(
+      String userId, UpdateUser changedUser) {
     return http.put(
-      Uri.parse('$host/users/edit-user/${changedUser.id}'),
+      Uri.parse('$host/users/edit-user/$userId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',

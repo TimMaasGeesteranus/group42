@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:ho_pla/model/hopla_user.dart';
 import 'package:ho_pla/util/backend.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:ho_pla/util/ho_pla_scaffold.dart';
 import 'package:ho_pla/views/settings.dart';
 import 'package:http/http.dart';
+
+import '../model/hopla_update_user.dart';
 
 class ProfileWidget extends StatefulWidget {
   const ProfileWidget({super.key});
@@ -19,8 +20,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   final TextEditingController _nameTextController = TextEditingController();
   final TextEditingController _emailTextController = TextEditingController();
 
-  late Future<User?> loadingFuture;
-  User? currentUser;
+  late Future<UpdateUser?> loadingFuture;
+  UpdateUser? currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
         ));
   }
 
-  Widget buildProfilePage(User currentUser) {
+  Widget buildProfilePage(UpdateUser currentUser) {
     return ListView(
       children: [
         const Icon(
@@ -113,7 +114,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
 
   void onClickPremium() async {
     if (currentUser != null) {
-      debugPrint("Toggle premium status of user ${currentUser!.id}");
+      debugPrint("Toggle premium status of user ${currentUser!.name}");
       currentUser!.hasPremium = !currentUser!.hasPremium;
       onClickSave();
     }
@@ -156,12 +157,12 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   }
 
   void onClickSave() async {
-    User? toChangeUser = currentUser;
+    UpdateUser? toChangeUser = currentUser;
     if (toChangeUser != null) {
       toChangeUser.name = _nameTextController.text;
       toChangeUser.email = _emailTextController.text;
 
-      var res = await Backend.changeUser(toChangeUser);
+      var res = await Backend.changeUser(CurrentUser.id, toChangeUser);
       String message = res.statusCode == 200
           ? "Successfully changed"
           : "Error changing the user";
@@ -182,8 +183,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     loadingFuture = fetchUser();
   }
 
-  Future<User?> fetchUser() async {
-    Response response = await Backend.getHouseById(CurrentUser.id);
+  Future<UpdateUser?> fetchUser() async {
+    Response response = await Backend.getUser(CurrentUser.id);
 
     if (response.statusCode != 200) {
       debugPrint(
@@ -191,7 +192,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
       return null;
     }
 
-    User user = jsonDecode(response.body);
+    UpdateUser user = UpdateUser.fromJson(jsonDecode(response.body));
 
     _nameTextController.text = user.name;
     _emailTextController.text = user.email;

@@ -16,8 +16,7 @@ Item _$ItemFromJson(Map<String, dynamic> json) => Item(
       qrcode: json['qrcode'] as String?,
     );
 
-Map<String, dynamic> _$ItemToJson(Item instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'reservations': instance.reservations,
