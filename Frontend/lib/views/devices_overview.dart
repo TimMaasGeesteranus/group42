@@ -96,7 +96,10 @@ class _DevicesOverviewWidgetState extends State<DevicesOverviewWidget> {
     super.initState();
     loadHouseFuture = Backend.getHouseById(CurrentUser.houseId).then((res) {
       if (res.statusCode == 200) {
-        return json.decode(res.body);
+        debugPrint("Return${res.body}");
+        var json = jsonDecode(res.body);
+
+        return House.fromJson(jsonDecode(res.body));
       } else {
         throw Exception(res.body);
       }

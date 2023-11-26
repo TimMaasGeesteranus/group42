@@ -8,8 +8,9 @@ part of 'reservation.dart';
 
 Reservation _$ReservationFromJson(Map<String, dynamic> json) => Reservation(
       id: json['id'] as int,
-      user: Reservation._fromJson(json['user'] as Map<String, dynamic>),
-      item: Item.fromJson(json['item'] as Map<String, dynamic>),
+      user: json['user'] == null
+          ? null
+          : User.fromJson(json['user'] as Map<String, dynamic>),
       startTime: DateTime.parse(json['startTime'] as String),
       endTime: DateTime.parse(json['endTime'] as String),
     );
@@ -17,8 +18,7 @@ Reservation _$ReservationFromJson(Map<String, dynamic> json) => Reservation(
 Map<String, dynamic> _$ReservationToJson(Reservation instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'user': Reservation._toJson(instance.user),
-      'item': instance.item,
+      'user': instance.user,
       'startTime': instance.startTime.toIso8601String(),
       'endTime': instance.endTime.toIso8601String(),
     };

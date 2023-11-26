@@ -55,9 +55,9 @@ class Backend {
     );
   }
 
-  static Future<http.Response> getItemsByHouseId(String houseId) {
+  static Future<http.Response> getItemByItem(String itemId) {
     return http.get(
-      Uri.parse('$host/items/get_items_by_house_id/$houseId'),
+      Uri.parse('$host/items/get_item_by_id/$itemId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
@@ -68,12 +68,12 @@ class Backend {
   static Future<http.Response> addReservation(
       String userId, String itemId, Appointment reservation) {
     final jsonData = {
-      'StartTime': reservation.startTime,
-      'EndTime': reservation.endTime,
+      'StartTime': reservation.startTime.toIso8601String(),
+      'EndTime': reservation.endTime.toIso8601String(),
     };
 
     return http.post(
-      Uri.parse('$host/items/create-reservation/$userId/$itemId'),
+      Uri.parse('$host/users/create-reservation/$userId/$itemId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
@@ -101,6 +101,7 @@ class Backend {
       'Name': name,
       'HouseId': houseId,
       'Image': image,
+      'QrCode': null,
     };
 
     return http.post(

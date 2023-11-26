@@ -1,11 +1,10 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:ho_pla/util/current_user.dart';
+import 'package:ho_pla/util/ho_pla_theme.dart';
 import 'package:ho_pla/views/devices_overview.dart';
 import 'package:ho_pla/views/join_house.dart';
 import 'package:ho_pla/views/login.dart';
-import 'package:ho_pla/util/ho_pla_theme.dart';
-import 'package:ho_pla/views/profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
@@ -16,7 +15,7 @@ Future<void> main() async {
   final bool darkMode = preferences.getBool('darkmode') ?? false;
   // Set current user id if available
   CurrentUser.id = preferences.getString('userid') ?? "";
-  CurrentUser.houseId = preferences.getString('houseid') ?? "";
+  CurrentUser.houseId = preferences.getString('houseid') ?? "1";
 
   runApp(MyApp(darkMode: darkMode));
 }

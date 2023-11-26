@@ -9,17 +9,18 @@ part of 'item.dart';
 Item _$ItemFromJson(Map<String, dynamic> json) => Item(
       id: json['id'] as int,
       name: json['name'] as String,
-      house: House.fromJson(json['house'] as Map<String, dynamic>),
-      reservations: (json['reservations'] as List<dynamic>)
-          .map((e) => Reservation.fromJson(e as Map<String, dynamic>))
+      reservations: (json['reservations'] as List<dynamic>?)
+          ?.map((e) => Reservation.fromJson(e as Map<String, dynamic>))
           .toList(),
       image: json['image'] as String,
+      qrcode: json['qrcode'] as String?,
     );
 
-Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
+Map<String, dynamic> _$ItemToJson(Item instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'house': instance.house,
       'reservations': instance.reservations,
       'image': instance.image,
+      'qrcode': instance.qrcode,
     };
