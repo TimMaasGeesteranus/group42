@@ -2,6 +2,7 @@
 using HoPla_API.Entities;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -103,6 +104,33 @@ namespace HoPla_API.Controllers
             return BadRequest("Invalid username or password");
         }
 
+        [HttpGet("get_user_by_id/{userId}")]
+        public async Task<IActionResult> GetUserById(int userId)
+        {
+            try
+            {
+                User user = _appDbContext.Users.FirstOrDefault(u => u.Id == userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                var updatedUser = new UpdateUser
+                {
+                    Email = user.Email,
+                    Name = user.Name,
+                    HasPremium = user.HasPremium,
+                };
+
+                return Ok(updatedUser);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.InnerException.Message);
+            }
+        }
+
         [HttpDelete("delete_user/{userId}")]
         public async Task<IActionResult> DeleteReservation(int userId)
         {
@@ -176,7 +204,7 @@ namespace HoPla_API.Controllers
         }
 
         [HttpPut("edit-user/{userId}")]
-        public async Task<IActionResult> EditUserData(int userId, User editedUser)
+        public async Task<IActionResult> EditUserData(int userId, UpdateUser editedUser)
         {
             try
             {
@@ -216,13 +244,14 @@ namespace HoPla_API.Controllers
                 }
 
                 var reservation = new Reservation { 
-                    User = user, 
-                    Item = item, 
+                    User = user,
                     StartTime = reservationRequest.StartTime,
                     EndTime = reservationRequest.EndTime
                 };
 
                 _appDbContext.Reservations.Add(reservation);
+                await _appDbContext.SaveChangesAsync();
+                item.Reservations.Add(reservation);
                 await _appDbContext.SaveChangesAsync();
                 return Ok($"Reservation {reservation.Id} created for user {user.Id}");
             }

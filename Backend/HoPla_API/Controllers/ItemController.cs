@@ -25,7 +25,7 @@ namespace HoPla_API.Controllers
             {
                 try
                 {
-                    Item item = _appDbContext.Items.Single(x => x.Id == itemId);
+                    Item item = _appDbContext.Items.Include(i => i.Reservations).Single(x => x.Id == itemId);
                     return Ok(item);
                 }
                 catch
@@ -71,12 +71,7 @@ namespace HoPla_API.Controllers
                 {
                     House associatedHouse = _appDbContext.Houses.Single(h => h.Id == itemInput.HouseId);
 
-                    Item newItem = new Item
-                    {
-                        Name = itemInput.Name,
-                        Image = itemInput.Image,
-                        Qrcode = itemInput.Qrcode,
-                    };
+                    Item newItem = new Item(itemInput.Name, itemInput.Image, itemInput.Qrcode);
 
                     _appDbContext.Items.Add(newItem);
                     _appDbContext.SaveChanges();

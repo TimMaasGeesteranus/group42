@@ -1,23 +1,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'house.dart';
+part of 'hopla_update_user.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-House _$HouseFromJson(Map<String, dynamic> json) => House(
-      id: json['id'] as int,
+UpdateUser _$UpdateUserFromJson(Map<String, dynamic> json) => UpdateUser(
+      email: json['email'] as String,
       name: json['name'] as String,
       hasPremium: json['hasPremium'] as bool,
-      items: (json['items'] as List<dynamic>)
-          .map((e) => Item.fromJson(e as Map<String, dynamic>))
-          .toList(),
     );
 
-Map<String, dynamic> _$HouseToJson(House instance) => <String, dynamic>{
-      'id': instance.id,
+Map<String, dynamic> _$UpdateUserToJson(UpdateUser instance) =>
+    <String, dynamic>{
+      'email': instance.email,
       'name': instance.name,
       'hasPremium': instance.hasPremium,
-      'items': instance.items,
     };

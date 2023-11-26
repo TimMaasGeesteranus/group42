@@ -9,6 +9,8 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../model/hopla_user.dart';
 import '../model/item.dart';
 
+import '../model/hopla_update_user.dart';
+
 class Backend {
   // Use alias for localhost
   static const String host = "http://34.245.145.71:80";
@@ -57,9 +59,9 @@ class Backend {
     );
   }
 
-  static Future<http.Response> getItemsByHouseId(String houseId) {
+  static Future<http.Response> getItemByItem(String itemId) {
     return http.get(
-      Uri.parse('$host/items/get_items_by_house_id/$houseId'),
+      Uri.parse('$host/items/get_item_by_id/$itemId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
@@ -70,12 +72,12 @@ class Backend {
   static Future<http.Response> addReservation(
       String userId, String itemId, Appointment reservation) {
     final jsonData = {
-      'StartTime': reservation.startTime,
-      'EndTime': reservation.endTime,
+      'StartTime': reservation.startTime.toIso8601String(),
+      'EndTime': reservation.endTime.toIso8601String(),
     };
 
     return http.post(
-      Uri.parse('$host/items/create-reservation/$userId/$itemId'),
+      Uri.parse('$host/users/create-reservation/$userId/$itemId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
@@ -103,6 +105,7 @@ class Backend {
       'Name': name,
       'HouseId': houseId,
       'Image': image,
+      'QrCode': null,
     };
 
     return http.post(
@@ -130,6 +133,28 @@ class Backend {
         'accept': '*/*',
       },
       body: json.encode(jsonData),
+    );
+  }
+
+  static Future<http.Response> getUser(String userId) {
+    return http.get(
+      Uri.parse('$host/users/get_user_by_id/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+    );
+  }
+
+  static Future<http.Response> changeUser(
+      String userId, UpdateUser changedUser) {
+    return http.put(
+      Uri.parse('$host/users/edit-user/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: jsonEncode(changedUser),
     );
   }
 }

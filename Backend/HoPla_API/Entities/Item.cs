@@ -16,6 +16,14 @@ namespace HoPla_API.Entities
         public string? Image { get; set; }
 
         public string? Qrcode { get; set; }
+
+        public Item(string name, string image, string qrcode)
+        {
+            Name = name;
+            Image = image;
+            Qrcode = qrcode;
+            Reservations = new List<Reservation>();
+        }
     }
 
     public class ItemInputModel

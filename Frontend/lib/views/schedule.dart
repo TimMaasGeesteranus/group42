@@ -22,13 +22,13 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
   ReservationsDataSource source = ReservationsDataSource();
 
   /// This future will complete with the reservations fetched from the backend.
-  late Future<List<Appointment>> fetchReservationsFuture;
+  late Future<List<Appointment>?> fetchReservationsFuture;
 
   @override
   Widget build(BuildContext context) {
     return HoPlaScaffold(
         "Overview",
-        FutureBuilder<List<Appointment>>(
+        FutureBuilder<List<Appointment>?>(
           future: fetchReservationsFuture,
           builder: (context, snap) {
             if (!snap.hasData && !snap.hasError) {
@@ -95,20 +95,26 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
   }
 
   /// Async method that calls the backend
-  Future<List<Appointment>> fetchReservations() async {
-    Response response = await Backend.getItemsByHouseId(CurrentUser.houseId);
+  Future<List<Appointment>?> fetchReservations() async {
+    Response response = await Backend.getItemByItem(widget.item.id.toString());
 
     if (response.statusCode != 200) {
       debugPrint("Error: response status code != 200: ${response.statusCode}");
       return [];
     }
 
-    List<Item> items = jsonDecode(response.body);
-    Item currentItem =
-        items.firstWhere((element) => element.id == widget.item.id);
-    List<Appointment> appointments = currentItem.reservations
-        .map((e) => Appointment(startTime: e.startTime, endTime: e.endTime))
+    Item? item =
+        response.body != "" ? Item.fromJson(jsonDecode(response.body)) : null;
+    List<Appointment>? appointments = item?.reservations
+        ?.map((e) => Appointment(
+            startTime: e.startTime,
+            endTime: e.endTime,
+            subject: e.id.toString()))
         .toList();
+
+    if (appointments == null) {
+      return [];
+    }
 
     return appointments;
   }
