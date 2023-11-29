@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../util/ho_pla_scaffold.dart';
@@ -14,6 +15,8 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
   TextEditingController nameController = TextEditingController();
 
   final List<String> usernames = <String>['A', 'B', 'C']; //Dummy usernames
+  final int houseid = 420;
+
   static const double SIZEDBOXHEIGHT = 40;
 
   @override
@@ -38,9 +41,14 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
                     ),
                   ),
                   const SizedBox(height: SIZEDBOXHEIGHT,),
-                  const Text("House number"),
+                  const Text("House id"),
                   const Divider(),
-                  const Text("#\t" "420"), //TODO insert houseid here
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                    Text("#\t$houseid" ), //TODO insert houseid here
+                    IconButton(onPressed: OnCopyClicked, icon: const Icon(Icons.copy))
+                  ],),
                   const SizedBox(height: SIZEDBOXHEIGHT,),
                   Text("${usernames.length} members"),
                   const Divider(),
@@ -48,10 +56,16 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
                     padding: const EdgeInsets.all(8),
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        height: 50,
-                        child: Center(child: Text(usernames[index])),
-                      );
+                      return GestureDetector(
+                        onLongPress: OnLongPressMember,
+                        child: PopupMenuButton(
+
+                          itemBuilder: (context) {
+                            return <PopupMenuItem>[const PopupMenuItem(child: Text("Delete"))];},
+                          child: Container(
+                            height: 50,
+                            child: Center(child: Text(usernames[index])),
+                        )));
                     },
                     separatorBuilder: (BuildContext context, int index) =>
                         const Divider(),
@@ -76,6 +90,14 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
   }
 
   OnSaveClicked() {
+    return;
+  }
+
+  OnCopyClicked() async {
+    await Clipboard.setData(ClipboardData(text: houseid.toString()));
+  }
+
+  OnLongPressMember() {
     return;
   }
 }
