@@ -34,7 +34,11 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
                     border: OutlineInputBorder(),
                   ),
                 ),
+                const Text("House number"),
+                const Divider(),
                 const Text("#\t" "420"), //TODO insert houseid here
+                Text("${usernames.length} members"),
+                const Divider(),
                 ListView.separated(
                   padding: const EdgeInsets.all(8),
                   shrinkWrap: true,
@@ -44,7 +48,8 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
                       child: Center(child: Text(usernames[index])),
                     );
                   },
-                  separatorBuilder: (BuildContext context, int index) => const Divider(),
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const Divider(),
                   itemCount: usernames.length,
                 ),
                 ElevatedButton(
