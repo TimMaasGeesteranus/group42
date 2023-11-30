@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:ho_pla/util/backend.dart';
-import 'package:ho_pla/views/join_house.dart';
+import 'package:ho_pla/views/new_house.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({super.key});
@@ -19,7 +19,7 @@ class LoginWidgetState extends State<LoginWidget> {
       Backend.saveAndSetUserIdByResponse(res);
       return null;
     } else {
-      return res.body;
+      return "Error ${res.statusCode}. ${res.body}";
     }
   }
 
@@ -34,7 +34,7 @@ class LoginWidgetState extends State<LoginWidget> {
       Backend.saveAndSetUserIdByResponse(res);
       return null;
     } else {
-      return res.body;
+      return "Error ${res.statusCode}. ${res.body}";
     }
   }
 
@@ -53,7 +53,7 @@ class LoginWidgetState extends State<LoginWidget> {
       onSubmitAnimationCompleted: () {
         // After completion navigate to the next widget
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const JoinHouseWidget(),
+          builder: (context) => const NewHouseWidget(),
         ));
       },
       onRecoverPassword: _recoverPassword,
