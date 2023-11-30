@@ -41,7 +41,7 @@ namespace HoPla_API.Controllers
             {
                 House newHouse = new House(houseInput.Name, houseInput.HasPremium)
                 {
-                    HouseSize = houseInput.HouseSize,
+                    HouseSize = 15,
                 };
 
                 _appDbContext.Houses.Add(newHouse);
@@ -70,6 +70,9 @@ namespace HoPla_API.Controllers
                     
                     if(houseInput.HouseSize != null)
                         existingHouse.HouseSize = houseInput.HouseSize;
+
+                    if (houseInput.HasPremium == true)
+                        existingHouse.HouseSize = 30;
 
                     _appDbContext.SaveChanges();
 

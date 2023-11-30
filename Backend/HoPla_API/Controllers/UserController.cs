@@ -167,6 +167,13 @@ namespace HoPla_API.Controllers
                     return NotFound("User or house not found.");
                 }
 
+                int usersWithHouseCount = _appDbContext.Users.Count(u => u.House != null && u.House.Id == houseId);
+
+                if (usersWithHouseCount >= house.HouseSize)
+                {
+                    return BadRequest("House has reached its maximum capacity.");
+                }
+
                 user.House = house;
                 _appDbContext.Users.Update(user);
                 await _appDbContext.SaveChangesAsync();
@@ -284,6 +291,38 @@ namespace HoPla_API.Controllers
                 await _appDbContext.SaveChangesAsync();
 
                 return Ok($"Reservation {reservation.Id} deleted for user {user.Id}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.InnerException.Message);
+            }
+        }
+
+        [HttpPut("update-reservation/{userId}/{reservationId}")]
+        public async Task<IActionResult> UpdateReservation(int userId, int reservationId, ReservationRequest updatedReservation)
+        {
+            try
+            {
+                User user = _appDbContext.Users.FirstOrDefault(u => u.Id == userId);
+                Reservation reservation = _appDbContext.Reservations.FirstOrDefault(r => r.Id == reservationId);
+
+                if (user == null || reservation == null)
+                {
+                    return NotFound("User or reservation not found.");
+                }
+
+                if (reservation.User.Id != userId)
+                {
+                    return BadRequest("User does not own this reservation.");
+                }
+
+                reservation.StartTime = updatedReservation.StartTime;
+                reservation.EndTime = updatedReservation.EndTime;
+
+                _appDbContext.Reservations.Update(reservation);
+                await _appDbContext.SaveChangesAsync();
+
+                return Ok($"Reservation {reservation.Id} updated for user {user.Id}");
             }
             catch (Exception ex)
             {
