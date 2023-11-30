@@ -162,6 +162,18 @@ class Backend {
     );
   }
 
+  static Future<http.Response> joinHouse(
+      String userId, String houseId){
+
+    return http.post(
+      Uri.parse('$host/users/assign-house/$userId/$houseId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      }
+    );
+  }
+
   static Future<http.Response> getUser(String userId) {
     return http.get(
       Uri.parse('$host/users/get_user_by_id/$userId'),
