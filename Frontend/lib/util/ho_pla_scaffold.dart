@@ -34,6 +34,23 @@ class HoPlaScaffold extends StatelessWidget {
             )
           ],
         ),
-        body: body);
+        body: Column(
+          children: [
+            Expanded(child: body),
+            Container(
+              width: 300,
+                height: 50,
+                color: Colors.white,
+              child: const Center(
+                child: Text(
+                  "Advertisement",
+                  style: TextStyle(
+                    color: Colors.black
+                  ),
+                )
+              ),
+            )
+          ],
+        ));
   }
 }
