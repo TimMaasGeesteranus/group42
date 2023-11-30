@@ -83,6 +83,35 @@ class Backend {
     );
   }
 
+  static Future<http.Response> updateReservation(
+      String userId, String reservationId, Appointment reservation) {
+    final jsonData = {
+      'StartTime': reservation.startTime.toIso8601String(),
+      'EndTime': reservation.endTime.toIso8601String(),
+    };
+
+    return http.put(
+      Uri.parse('$host/users/update-reservation/$userId/$reservationId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: json.encode(jsonData),
+    );
+  }
+
+  static Future<http.Response> deleteReservation(
+      String userId, String reservationId) {
+
+    return http.delete(
+      Uri.parse('$host/users/delete-reservation/$userId/$reservationId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+    );
+  }
+
   static void saveAndSetUserIdByResponse(http.Response res) async {
     final Map<String, dynamic> responseData = json.decode(res.body);
     final String? userId = responseData['id']?.toString();
