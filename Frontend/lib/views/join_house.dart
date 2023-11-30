@@ -34,9 +34,7 @@ class _JoinHouseWidgetState extends State<JoinHouseWidget> {
   }
 
   joinHouse() async {
-    var userId = "10"; //TODO: how to get userId?
-    print("join");
-    print(houseCodeController.text);
+    var userId = "1"; //TODO: how to get userId?
 
     try {
       if (houseCodeController.text.isEmpty) {
@@ -46,11 +44,9 @@ class _JoinHouseWidgetState extends State<JoinHouseWidget> {
         var res = await Backend.joinHouse(
             userId, houseCodeController.text);
 
-        if (res.statusCode == 201) {
-          print("we got statuscode 201");
-
+        if (res.statusCode == 200) {
           if (context.mounted) {
-            // Return to device overview
+            // Go to house overview
             Navigator.pushReplacement(context, MaterialPageRoute(
                 builder: (context) => const MyHouseWidget()));
           }
