@@ -13,12 +13,16 @@ class Backend {
   static const String host = "http://34.245.145.71:80";
 
   static Future<http.Response> register(
-      String email, String name, String password) async {
-    final jsonData = {
+      String email, String name, String password, String? firebaseId) async {
+    var jsonData = {
       'email': email,
       'name': name,
       'password': password,
     };
+
+    if (firebaseId != null) {
+      jsonData["firebaseId"] = firebaseId;
+    }
 
     return http.post(
       Uri.parse('$host/Users/register'),

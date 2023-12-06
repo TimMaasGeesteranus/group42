@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:ho_pla/util/backend.dart';
@@ -26,8 +27,9 @@ class LoginWidgetState extends State<LoginWidget> {
   /// Called on signup user. Returns the message fpr the user if not successful.
   /// Returning null means success.
   Future<String?> _signupUser(SignupData data) async {
-    var res = await Backend.register(
-        data.name!, data.additionalSignupData!["name"]!, data.password!);
+    String? firebaseId = await FirebaseMessaging.instance.getToken();
+    var res = await Backend.register(data.name!,
+        data.additionalSignupData!["name"]!, data.password!, firebaseId);
     debugPrint("Register status: ${res.statusCode.toString()}");
 
     if (res.statusCode == 200) {

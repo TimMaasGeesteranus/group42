@@ -1,4 +1,6 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:ho_pla/util/ho_pla_theme.dart';
@@ -6,6 +8,8 @@ import 'package:ho_pla/views/devices_overview.dart';
 import 'package:ho_pla/views/login.dart';
 import 'package:ho_pla/views/new_house.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding
@@ -17,7 +21,29 @@ Future<void> main() async {
   CurrentUser.id = preferences.getString('userid') ?? "";
   CurrentUser.houseId = preferences.getString('houseid') ?? "";
 
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  //TODO: move to login
+  final notificationSettings =
+      await FirebaseMessaging.instance.requestPermission(provisional: true);
+
+  final token = await FirebaseMessaging.instance.getToken();
+
+  if (token != null) {
+    debugPrint(token);
+  }
+
   runApp(MyApp(darkMode: darkMode));
+}
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.messageId}");
 }
 
 class MyApp extends StatelessWidget {
