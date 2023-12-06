@@ -47,7 +47,6 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
                     children: [
                   TextFormField(
                     controller: nameController,
-                    initialValue: "My Kingdom",
                     decoration: const InputDecoration(
                       labelText: "House Name",
                       border: OutlineInputBorder(),
@@ -110,13 +109,20 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
   _getHouseOfUser() async {
     final preferences = await SharedPreferences.getInstance();
     try {
-      houseid = preferences.getString("houseid")!;
+      //houseid = preferences.getString("houseid")!;
+      houseid = '1'; //For Testing Purposes
       CurrentUser.houseId = houseid;
 
       var res = await Backend.getHouseById(houseid);
-      if (res.statusCode == 201) {
+      if (res.statusCode == 200) {
+        print(res.body);
+        print("got da house?");
         House currentHouse = House.fromJson(jsonDecode(res.body));
+        print("got da house");
+        print(currentHouse.name);
         currenthouse = currentHouse;
+
+        nameController.text = currenthouse!.name;
 
         return;
       } else {
@@ -124,14 +130,14 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
             'Could not get the house from houseid: status ${res.statusCode}');
       }
     } on Error catch (e, _) {
-      showError('No HouseID saved in the preferences');
+      showError('Error retrieving the House');
     }
   }
 
   onLeaveClicked() async {
     var res = await Backend.removeHouseFromUser(CurrentUser.id);
 
-    if (res.statusCode == 201) {
+    if (res.statusCode == 200) {
       if (context.mounted) {
         // Return to device overview
         Navigator.pushReplacement(
@@ -155,7 +161,7 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
         var res = await Backend.updateHouse(
             houseid, null); //TODO: Replace null with correct class
 
-        if (res.statusCode == 201) {
+        if (res.statusCode == 200) {
           if (context.mounted) {
             // Return to device overview
             Navigator.pushReplacement(
