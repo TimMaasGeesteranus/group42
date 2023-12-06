@@ -6,8 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-import '../model/hopla_user.dart';
-import '../model/item.dart';
+import '../model/house.dart';
 
 class Backend {
   // Use alias for localhost
@@ -132,4 +131,22 @@ class Backend {
       body: json.encode(jsonData),
     );
   }
+
+  static Future<http.Response> updateHouse(
+      String houseId, House? house) { //TODO: Remove nullable (used for testing now)
+    final jsonData = {
+      'HouseId': houseId,
+      'House': house //TODO: Convert House class to HouseInputModel (see backend)
+    };
+    
+    return http.put(
+      Uri.parse('$host/House/$houseId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: json.encode(jsonData),
+    );
+  }
+
 }
