@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ho_pla/util/current_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/house.dart';
@@ -26,9 +27,9 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
   static const double SIZEDBOXHEIGHT = 40;
 
   @override
-    void initState() {
+  void initState() {
     super.initState();
-    _getHouseClass();
+    _getHouseOfUser();
   }
 
   @override
@@ -52,16 +53,23 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  const SizedBox(height: SIZEDBOXHEIGHT,),
+                  const SizedBox(
+                    height: SIZEDBOXHEIGHT,
+                  ),
                   const Text("House ID"),
                   const Divider(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                    Text("#\t$houseid" ), //TODO insert houseid here
-                    IconButton(onPressed: onCopyClicked, icon: const Icon(Icons.copy))
-                  ],),
-                  const SizedBox(height: SIZEDBOXHEIGHT,),
+                      Text("#\t$houseid"), //TODO insert houseid here
+                      IconButton(
+                          onPressed: onCopyClicked,
+                          icon: const Icon(Icons.copy))
+                    ],
+                  ),
+                  const SizedBox(
+                    height: SIZEDBOXHEIGHT,
+                  ),
                   Text("${usernames.length} members"),
                   const Divider(),
                   ListView.separated(
@@ -69,15 +77,17 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
-                        onLongPress: onLongPressMember,
-                        child: PopupMenuButton(
-
-                          itemBuilder: (context) {
-                            return <PopupMenuItem>[const PopupMenuItem(child: Text("Delete"))];},
-                          child: Container(
-                            height: 50,
-                            child: Center(child: Text(usernames[index])),
-                        )));
+                          onLongPress: onLongPressMember,
+                          child: PopupMenuButton(
+                              itemBuilder: (context) {
+                                return <PopupMenuItem>[
+                                  const PopupMenuItem(child: Text("Delete"))
+                                ];
+                              },
+                              child: Container(
+                                height: 50,
+                                child: Center(child: Text(usernames[index])),
+                              )));
                     },
                     separatorBuilder: (BuildContext context, int index) =>
                         const Divider(),
@@ -97,29 +107,43 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
         ));
   }
 
-  _getHouseClass() async {
+  _getHouseOfUser() async {
     final preferences = await SharedPreferences.getInstance();
     try {
       houseid = preferences.getString("houseid")!;
+      CurrentUser.houseId = houseid;
 
-      var res = await Backend.getHouseById(
-          houseid);
+      var res = await Backend.getHouseById(houseid);
       if (res.statusCode == 201) {
         House currentHouse = House.fromJson(jsonDecode(res.body));
         currenthouse = currentHouse;
 
         return;
       } else {
-        showError('Could not get the house from houseid: status ${res.statusCode}');
+        showError(
+            'Could not get the house from houseid: status ${res.statusCode}');
       }
-
     } on Error catch (e, _) {
       showError('No HouseID saved in the preferences');
     }
-
   }
 
-  onLeaveClicked() {
+  onLeaveClicked() async {
+    var res = await Backend.removeHouseFromUser(CurrentUser.id);
+
+    if (res.statusCode == 201) {
+      if (context.mounted) {
+        // Return to device overview
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DevicesOverviewWidget(
+                    houseid))); //TODO:What screen to go to?
+      }
+      return;
+    } else {
+      showError('Could not leave the house: status ${res.statusCode}');
+    }
     return;
   }
 
@@ -127,19 +151,18 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
     try {
       if (nameController.text.isEmpty) {
         showError("House Name cannot be empty");
-      }
-      else {
+      } else {
         var res = await Backend.updateHouse(
             houseid, null); //TODO: Replace null with correct class
 
         if (res.statusCode == 201) {
-
           if (context.mounted) {
             // Return to device overview
-            Navigator.pushReplacement(context, MaterialPageRoute(
-                builder: (context) => DevicesOverviewWidget(houseid)));
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DevicesOverviewWidget(houseid)));
           }
-
           return;
         } else {
           showError('Could not update the house: status ${res.statusCode}');

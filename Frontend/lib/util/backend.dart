@@ -149,4 +149,20 @@ class Backend {
     );
   }
 
+  static Future<http.Response> removeHouseFromUser(
+      String userId) {
+    final jsonData = {
+      'UserId': userId,
+    };
+
+    return http.post(
+      Uri.parse('$host/remove-house/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: json.encode(jsonData),
+    );
+  }
+
 }
