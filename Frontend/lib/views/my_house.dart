@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ho_pla/util/current_user.dart';
@@ -8,9 +10,8 @@ import '../model/house.dart';
 import '../util/backend.dart';
 import '../util/ho_pla_scaffold.dart';
 import 'devices_overview.dart';
-
-class MyHouseWidget extends StatefulWidget {
 import '../util/ho_pla_scaffold.dart';
+
 
 class MyHouseWidget extends StatefulWidget {
   const MyHouseWidget({super.key});
@@ -22,7 +23,7 @@ class MyHouseWidget extends StatefulWidget {
 class _MyHouseWidgetState extends State<MyHouseWidget> {
   TextEditingController nameController = TextEditingController();
 
-  final List<String> usernames = <String>['A', 'B', 'C']; //Dummy usernames
+  List<String> usernames = <String>['A', 'B', 'C']; //Dummy usernames
   String houseid = '';
   House? currenthouse;
 
@@ -117,11 +118,8 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
 
       var res = await Backend.getHouseById(houseid);
       if (res.statusCode == 200) {
-        print(res.body);
-        print("got da house?");
         House currentHouse = House.fromJson(jsonDecode(res.body));
-        print("got da house");
-        print(currentHouse.name);
+
         currenthouse = currentHouse;
 
         nameController.text = currenthouse!.name;
@@ -207,3 +205,4 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
     }
   }
 }
+
