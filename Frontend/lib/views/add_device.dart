@@ -38,13 +38,15 @@ class _AddDeviceWidgetState extends State<AddDeviceWidget> {
 
   onAddDeviceClicked() async {
     var provider = Provider.of<HouseChangeNotifier>(context, listen: false);
-    Item device = await Navigator.push(
+    Item? device = await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => DeviceCreationWidget(provider),
         ));
 
-    provider.house.items.add(device);
-    provider.houseModified();
+    if (device != null) {
+      provider.house.items.add(device);
+      provider.houseModified();
+    }
   }
 }

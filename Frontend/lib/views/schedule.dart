@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:ho_pla/util/backend.dart';
 import 'package:ho_pla/util/current_user.dart';
+import 'package:ho_pla/views/update_reservation.dart';
 import 'package:http/http.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -22,13 +23,13 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
   ReservationsDataSource source = ReservationsDataSource();
 
   /// This future will complete with the reservations fetched from the backend.
-  late Future<List<Appointment>> fetchReservationsFuture;
+  late Future<List<Appointment>?> fetchReservationsFuture;
 
   @override
   Widget build(BuildContext context) {
     return HoPlaScaffold(
         "Overview",
-        FutureBuilder<List<Appointment>>(
+        FutureBuilder<List<Appointment>?>(
           future: fetchReservationsFuture,
           builder: (context, snap) {
             if (!snap.hasData && !snap.hasError) {
@@ -47,10 +48,61 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                 view: CalendarView.week,
                 onTap: _onTap,
                 dataSource: source,
+                onLongPress: _onLongPress,
               );
             }
           },
         ));
+  }
+
+  void _updateReservation(DateTime startTime, DateTime endTime, String reservationId) async {
+    try {
+      Appointment reservation = Appointment(
+        startTime: startTime,
+        endTime: endTime,
+      );
+
+      final response = await Backend.updateReservation(CurrentUser.id, reservationId, reservation);
+
+      // Handle the response as needed
+      debugPrint('Update Reservation Response: ${response.statusCode}');
+    } catch (e) {
+      // Handle errors
+      debugPrint('Error updating reservation: $e');
+    }
+  }
+
+
+  void _deleteReservation(String reservationId) async {
+    try {
+      final response = await Backend.deleteReservation(CurrentUser.id, reservationId);
+
+      // Handle the response as needed
+      debugPrint('Delete Reservation Response: ${response.statusCode}');
+    } catch (e) {
+      // Handle errors
+      debugPrint('Error deleting reservation: $e');
+    }
+  }
+
+  void _onLongPress(CalendarLongPressDetails details) {
+    if (details.appointments != null && details.appointments!.isNotEmpty) {
+      Appointment selectedAppointment = details.appointments![0];
+
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        return UpdateReservationWidget(
+          onConfirm: (DateTime startTime, DateTime endTime) {
+            _updateReservation(startTime, endTime, selectedAppointment.subject);
+          },
+          onDelete: () {
+            _deleteReservation(selectedAppointment.subject);
+
+            source.appointments?.add(selectedAppointment);
+            source.notifyListeners(CalendarDataSourceAction.remove, [selectedAppointment]);
+          },
+        );
+      }));
+    }
   }
 
   void _onTap(CalendarTapDetails details) async {
@@ -95,20 +147,27 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
   }
 
   /// Async method that calls the backend
-  Future<List<Appointment>> fetchReservations() async {
-    Response response = await Backend.getItemsByHouseId(CurrentUser.houseId);
+  Future<List<Appointment>?> fetchReservations() async {
+    Response response = await Backend.getItemByItem(widget.item.id.toString());
 
     if (response.statusCode != 200) {
       debugPrint("Error: response status code != 200: ${response.statusCode}");
       return [];
     }
 
-    List<Item> items = jsonDecode(response.body);
-    Item currentItem =
-        items.firstWhere((element) => element.id == widget.item.id);
-    List<Appointment> appointments = currentItem.reservations
-        .map((e) => Appointment(startTime: e.startTime, endTime: e.endTime))
+    Item? item =
+        response.body != "" ? Item.fromJson(jsonDecode(response.body)) : null;
+    List<Appointment>? appointments = item?.reservations
+        ?.map((e) => Appointment(
+            id: e.id,
+            startTime: e.startTime,
+            endTime: e.endTime,
+            subject: e.id.toString()))
         .toList();
+
+    if (appointments == null) {
+      return [];
+    }
 
     return appointments;
   }

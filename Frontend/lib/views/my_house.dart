@@ -1,14 +1,16 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ho_pla/util/current_user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/house.dart';
 import '../util/backend.dart';
 import '../util/ho_pla_scaffold.dart';
 import 'devices_overview.dart';
+
+class MyHouseWidget extends StatefulWidget {
+import '../util/ho_pla_scaffold.dart';
 
 class MyHouseWidget extends StatefulWidget {
   const MyHouseWidget({super.key});

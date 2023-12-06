@@ -5,7 +5,7 @@ import 'package:ho_pla/util/current_user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-
+import '../model/hopla_update_user.dart';
 import '../model/house.dart';
 
 class Backend {
@@ -21,7 +21,7 @@ class Backend {
     };
 
     return http.post(
-      Uri.parse('$host/User/register'),
+      Uri.parse('$host/Users/register'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
@@ -37,7 +37,7 @@ class Backend {
     };
 
     return http.post(
-      Uri.parse('$host/User/login'),
+      Uri.parse('$host/Users/login'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
@@ -56,9 +56,9 @@ class Backend {
     );
   }
 
-  static Future<http.Response> getItemsByHouseId(String houseId) {
+  static Future<http.Response> getItemByItem(String itemId) {
     return http.get(
-      Uri.parse('$host/items/get_items_by_house_id/$houseId'),
+      Uri.parse('$host/items/get_item_by_id/$itemId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
@@ -69,17 +69,46 @@ class Backend {
   static Future<http.Response> addReservation(
       String userId, String itemId, Appointment reservation) {
     final jsonData = {
-      'StartTime': reservation.startTime,
-      'EndTime': reservation.endTime,
+      'StartTime': reservation.startTime.toIso8601String(),
+      'EndTime': reservation.endTime.toIso8601String(),
     };
 
     return http.post(
-      Uri.parse('$host/items/create-reservation/$userId/$itemId'),
+      Uri.parse('$host/users/create-reservation/$userId/$itemId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
       },
       body: json.encode(jsonData),
+    );
+  }
+
+  static Future<http.Response> updateReservation(
+      String userId, String reservationId, Appointment reservation) {
+    final jsonData = {
+      'StartTime': reservation.startTime.toIso8601String(),
+      'EndTime': reservation.endTime.toIso8601String(),
+    };
+
+    return http.put(
+      Uri.parse('$host/users/update-reservation/$userId/$reservationId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: json.encode(jsonData),
+    );
+  }
+
+  static Future<http.Response> deleteReservation(
+      String userId, String reservationId) {
+
+    return http.delete(
+      Uri.parse('$host/users/delete-reservation/$userId/$reservationId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
     );
   }
 
@@ -102,6 +131,7 @@ class Backend {
       'Name': name,
       'HouseId': houseId,
       'Image': image,
+      'QrCode': null,
     };
 
     return http.post(
@@ -138,7 +168,7 @@ class Backend {
       'HouseId': houseId,
       'House': house //TODO: Convert House class to HouseInputModel (see backend)
     };
-    
+
     return http.put(
       Uri.parse('$host/House/$houseId'),
       headers: <String, String>{
@@ -165,4 +195,37 @@ class Backend {
     );
   }
 
+  static Future<http.Response> joinHouse(
+      String userId, String houseId){
+
+    return http.post(
+      Uri.parse('$host/users/assign-house/$userId/$houseId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      }
+    );
+  }
+
+  static Future<http.Response> getUser(String userId) {
+    return http.get(
+      Uri.parse('$host/users/get_user_by_id/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+    );
+  }
+
+  static Future<http.Response> changeUser(
+      String userId, UpdateUser changedUser) {
+    return http.put(
+      Uri.parse('$host/users/edit-user/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: jsonEncode(changedUser),
+    );
+  }
 }
