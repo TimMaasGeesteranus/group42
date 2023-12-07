@@ -12,7 +12,6 @@ import '../util/ho_pla_scaffold.dart';
 import 'devices_overview.dart';
 import '../util/ho_pla_scaffold.dart';
 
-
 class MyHouseWidget extends StatefulWidget {
   const MyHouseWidget({super.key});
 
@@ -43,63 +42,66 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
           padding: const EdgeInsets.all(8),
           color: Theme.of(context).cardColor,
           child: Scaffold(
+            resizeToAvoidBottomInset: false,
             body: Center(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                  TextFormField(
-                    controller: nameController,
-                    decoration: const InputDecoration(
-                      labelText: "House Name",
-                      border: OutlineInputBorder(),
+                child: SingleChildScrollView(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                    TextFormField(
+                      controller: nameController,
+                      decoration: const InputDecoration(
+                        labelText: "House Name",
+                        border: OutlineInputBorder(),
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: SIZEDBOXHEIGHT,
-                  ),
-                  const Text("House ID"),
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("#\t$houseid"), //TODO insert houseid here
-                      IconButton(
-                          onPressed: onCopyClicked,
-                          icon: const Icon(Icons.copy))
-                    ],
-                  ),
-                  const SizedBox(
-                    height: SIZEDBOXHEIGHT,
-                  ),
-                  Text("${usernames.length} members"),
-                  const Divider(),
-                  ListView.separated(
-                    padding: const EdgeInsets.all(8),
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      return GestureDetector(
-                          onLongPress: onLongPressMember,
-                          child: PopupMenuButton(
-                              itemBuilder: (context) {
-                                return <PopupMenuItem>[
-                                  const PopupMenuItem(child: Text("Delete"))
-                                ];
-                              },
-                              child: Container(
-                                height: 50,
-                                child: Center(child: Text(usernames[index])),
-                              )));
-                    },
-                    separatorBuilder: (BuildContext context, int index) =>
-                        const Divider(),
-                    itemCount: usernames.length,
-                  ),
-                  ElevatedButton(
-                    onPressed: onLeaveClicked,
-                    child: const Text('Leave House'),
-                  )
-                ])),
+                    const SizedBox(
+                      height: SIZEDBOXHEIGHT,
+                    ),
+                    const Text("House ID"),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("#\t$houseid"), //TODO insert houseid here
+                        IconButton(
+                            onPressed: onCopyClicked,
+                            icon: const Icon(Icons.copy))
+                      ],
+                    ),
+                    const SizedBox(
+                      height: SIZEDBOXHEIGHT,
+                    ),
+                    Text("${usernames.length} members"),
+                    const Divider(),
+                    ListView.separated(
+                      padding: const EdgeInsets.all(8),
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, int index) {
+                        return GestureDetector(
+                            onLongPress: onLongPressMember,
+                            child: PopupMenuButton(
+                                itemBuilder: (context) {
+                                  return <PopupMenuItem>[
+                                    const PopupMenuItem(child: Text("Delete"))
+                                  ];
+                                },
+                                child: Container(
+                                  height: 50,
+                                  child: Center(child: Text(usernames[index])),
+                                )));
+                      },
+                      separatorBuilder: (BuildContext context, int index) =>
+                          const Divider(),
+                      itemCount: usernames.length,
+                    ),
+                    ElevatedButton(
+                      onPressed: onLeaveClicked,
+                      child: const Text('Leave House'),
+                    )
+                  ]),
+                )),
             floatingActionButton: FloatingActionButton(
               onPressed: onSaveClicked,
               tooltip: 'Save changes',
@@ -205,4 +207,3 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
     }
   }
 }
-
