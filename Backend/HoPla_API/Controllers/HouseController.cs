@@ -34,16 +34,20 @@ namespace HoPla_API.Controllers
             return BadRequest("Input must be int!");
         }
 
-        [HttpPost]
-        public IActionResult CreateHouse([FromBody] HouseInputModel houseInput)
+        [HttpPost("{userId}")]
+        public IActionResult CreateHouse(int userId, [FromBody] HouseInputModel houseInput)
         {
             if (ModelState.IsValid)
             {
+                User user = _appDbContext.Users.FirstOrDefault(u => u.Id == userId);
+
                 House newHouse = new House(houseInput.Name, houseInput.HasPremium)
                 {
                     HouseSize = 15,
                 };
 
+                user.House = newHouse;
+                _appDbContext.Users.Update(user);
                 _appDbContext.Houses.Add(newHouse);
                 _appDbContext.SaveChanges();
 
