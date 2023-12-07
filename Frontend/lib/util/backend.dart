@@ -145,8 +145,9 @@ class Backend {
   }
 
   static Future<http.Response> createHouse(
-      String name, bool hasPremium, int houseSize) {
+      int userId, String name, bool hasPremium, int houseSize) {
     final jsonData = {
+      'UserId': userId,
       'Name': name,
       'HasPremium' : hasPremium,
       'HouseSize' : houseSize
@@ -186,7 +187,7 @@ class Backend {
     };
 
     return http.post(
-      Uri.parse('$host/remove-house/$userId'),
+      Uri.parse('$host/users/remove-house/$userId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
@@ -226,6 +227,17 @@ class Backend {
         'accept': '*/*',
       },
       body: jsonEncode(changedUser),
+    );
+  }
+
+  static Future<http.Response> getHouseUsers(
+      String houseId) {
+    return http.put(
+      Uri.parse('$host/house/$houseId/users'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
     );
   }
 }

@@ -53,7 +53,7 @@ class _NewHouseWidgetState extends State<NewHouseWidget> {
       }
       else {
         var res = await Backend.createHouse(
-            nameController.text, false, 10); //TODO: Replace dummy values
+            int.parse(CurrentUser.id),nameController.text, false, 10); //TODO: Replace dummy values
 
         if (res.statusCode == 201) {
           House newHouse = House.fromJson(jsonDecode(res.body));

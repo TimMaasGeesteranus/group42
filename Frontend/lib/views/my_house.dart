@@ -4,13 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/house.dart';
 import '../util/backend.dart';
 import '../util/ho_pla_scaffold.dart';
 import 'devices_overview.dart';
-import '../util/ho_pla_scaffold.dart';
 
 class MyHouseWidget extends StatefulWidget {
   const MyHouseWidget({super.key});
@@ -114,8 +112,8 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
   _getHouseOfUser() async {
     final preferences = await SharedPreferences.getInstance();
     try {
-      //houseid = preferences.getString("houseid")!;
-      houseid = '1'; //For Testing Purposes
+      houseid = preferences.getString("houseid")!;
+      //houseid = '14'; //For Testing Purposes
       CurrentUser.houseId = houseid;
 
       var res = await Backend.getHouseById(houseid);
@@ -125,6 +123,12 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
         currenthouse = currentHouse;
 
         nameController.text = currenthouse!.name;
+
+        var resUsers = await Backend.getHouseUsers(houseid);
+
+        print(resUsers.statusCode);
+        if (resUsers.statusCode == 200)
+          print(resUsers);
 
         return;
       } else {
