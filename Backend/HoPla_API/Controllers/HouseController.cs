@@ -108,5 +108,30 @@ namespace HoPla_API.Controllers
 
             return BadRequest("Input must be int!");
         }
+
+        [HttpGet("{id}/users")]
+        public IActionResult GetHouseUsers(string id)
+        {
+            if (int.TryParse(id, out var houseId))
+            {
+                var users = _appDbContext.Users
+                .Where(u => u.House != null && u.House.Id == houseId)
+                .Select(u => new UpdateUser
+                {
+                    Email = u.Email,
+                    Name = u.Name,
+                    HasPremium = u.HasPremium
+                })
+                .ToList();
+
+                if (users == null)
+                {
+                    return NotFound("House not found");
+                }
+
+                return Ok(users);
+            }
+            return BadRequest("Input must be int!");
+        }
     }
 }
