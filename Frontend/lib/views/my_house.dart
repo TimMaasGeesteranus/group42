@@ -21,8 +21,11 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
   TextEditingController nameController = TextEditingController();
 
   List<String> usernames = <String>['A', 'B', 'C']; //Dummy usernames
-  String houseid = '';
-  House? currenthouse;
+  List<dynamic> users = [];
+  String houseId = '';
+  House? currentHouse;
+  bool hasPremium = false;
+  int houseSize = 0; //TODO add houseSize to the House model
 
   static const double SIZEDBOXHEIGHT = 40;
 
@@ -43,10 +46,10 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
             resizeToAvoidBottomInset: false,
             body: Center(
                 child: SingleChildScrollView(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
                     TextFormField(
                       controller: nameController,
                       decoration: const InputDecoration(
@@ -62,12 +65,33 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("#\t$houseid"), //TODO insert houseid here
+                        Text("#\t$houseId"), //TODO insert houseid here
                         IconButton(
                             onPressed: onCopyClicked,
                             icon: const Icon(Icons.copy))
                       ],
                     ),
+                    const SizedBox(
+                      height: SIZEDBOXHEIGHT,
+                    ),
+                    const Text("Premium"),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (hasPremium) ...[
+                          const Text("Activated"),
+                          const Icon(Icons.grade),
+                        ] else
+                          const Text("Not Activated"),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: SIZEDBOXHEIGHT,
+                    ),
+                    const Text("House Size"),
+                    const Divider(),
+                    Text(houseSize.toString()),
                     const SizedBox(
                       height: SIZEDBOXHEIGHT,
                     ),
@@ -87,19 +111,27 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
                                 },
                                 child: Container(
                                   height: 50,
-                                  child: Center(child: Text(usernames[index])),
+                                  child: Center(
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                        Text(users[index]['name']),
+                                        if (users[index]['hasPremium'])
+                                          const Icon(Icons.grade)
+                                      ])),
                                 )));
                       },
                       separatorBuilder: (BuildContext context, int index) =>
                           const Divider(),
-                      itemCount: usernames.length,
+                      itemCount: users.length,
                     ),
                     ElevatedButton(
                       onPressed: onLeaveClicked,
                       child: const Text('Leave House'),
                     )
                   ]),
-                )),
+            )),
             floatingActionButton: FloatingActionButton(
               onPressed: onSaveClicked,
               tooltip: 'Save changes',
@@ -110,25 +142,35 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
   }
 
   _getHouseOfUser() async {
+    //TODO: Wait for completion of function before loading widget
     final preferences = await SharedPreferences.getInstance();
     try {
-      houseid = preferences.getString("houseid")!;
-      //houseid = '14'; //For Testing Purposes
-      CurrentUser.houseId = houseid;
+      setState(() {
+        houseId = preferences.getString("houseid")!;
+      });
+      CurrentUser.houseId = houseId;
 
-      var res = await Backend.getHouseById(houseid);
+      var res = await Backend.getHouseById(houseId);
       if (res.statusCode == 200) {
-        House currentHouse = House.fromJson(jsonDecode(res.body));
+        House houseById = House.fromJson(jsonDecode(res.body));
 
-        currenthouse = currentHouse;
+        setState(() {
+          hasPremium = houseById.hasPremium;
+        });
 
-        nameController.text = currenthouse!.name;
+        currentHouse = houseById;
+        nameController.text = currentHouse!.name;
 
-        var resUsers = await Backend.getHouseUsers(houseid);
+        var resUsers = await Backend.getHouseUsers(houseId);
 
-        print(resUsers.statusCode);
-        if (resUsers.statusCode == 200)
-          print(resUsers);
+        if (resUsers.statusCode == 200) {
+          print(resUsers.body);
+          print(json.decode(resUsers.body));
+
+          setState(() {
+            users = jsonDecode(resUsers.body);
+          });
+        }
 
         return;
       } else {
@@ -150,7 +192,7 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
             context,
             MaterialPageRoute(
                 builder: (context) => DevicesOverviewWidget(
-                    houseid))); //TODO:What screen to go to?
+                    houseId))); //TODO:What screen to go to?
       }
       return;
     } else {
@@ -165,7 +207,7 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
         showError("House Name cannot be empty");
       } else {
         var res = await Backend.updateHouse(
-            houseid, null); //TODO: Replace null with correct class
+            houseId, null); //TODO: Replace null with correct class
 
         if (res.statusCode == 200) {
           if (context.mounted) {
@@ -173,7 +215,7 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => DevicesOverviewWidget(houseid)));
+                    builder: (context) => DevicesOverviewWidget(houseId)));
           }
           return;
         } else {
@@ -187,7 +229,7 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
   }
 
   onCopyClicked() async {
-    await Clipboard.setData(ClipboardData(text: houseid.toString()));
+    await Clipboard.setData(ClipboardData(text: houseId.toString()));
     showMessage("House ID copied to clipboard!");
   }
 

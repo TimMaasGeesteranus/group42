@@ -154,7 +154,7 @@ class Backend {
     };
 
     return http.post(
-      Uri.parse('$host/house'),
+      Uri.parse('$host/house/$userId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
@@ -232,7 +232,7 @@ class Backend {
 
   static Future<http.Response> getHouseUsers(
       String houseId) {
-    return http.put(
+    return http.get(
       Uri.parse('$host/house/$houseId/users'),
       headers: <String, String>{
         'Content-Type': 'application/json',
