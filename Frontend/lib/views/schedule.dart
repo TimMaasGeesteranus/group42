@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:ho_pla/model/reservation.dart';
 import 'package:ho_pla/util/backend.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:ho_pla/views/update_reservation.dart';
@@ -23,14 +24,14 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
   ReservationsDataSource source = ReservationsDataSource();
 
   /// This future will complete with the reservations fetched from the backend.
-  late Future<List<Appointment>?> fetchReservationsFuture;
+  late Future<List<Appointment>?> fetchAppointmentsFuture;
 
   @override
   Widget build(BuildContext context) {
     return HoPlaScaffold(
         "Overview",
         FutureBuilder<List<Appointment>?>(
-          future: fetchReservationsFuture,
+          future: fetchAppointmentsFuture,
           builder: (context, snap) {
             if (!snap.hasData && !snap.hasError) {
               // No data and no error => the request is still running
@@ -143,21 +144,14 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
   @override
   void initState() {
     super.initState();
-    fetchReservationsFuture = fetchReservations();
+    fetchAppointmentsFuture = fetchAppointments();
   }
 
   /// Async method that calls the backend
-  Future<List<Appointment>?> fetchReservations() async {
-    Response response = await Backend.getItemByItem(widget.item.id.toString());
+  Future<List<Appointment>?> fetchAppointments() async {
+    var reservations = await fetchReservations();
 
-    if (response.statusCode != 200) {
-      debugPrint("Error: response status code != 200: ${response.statusCode}");
-      return [];
-    }
-
-    Item? item =
-        response.body != "" ? Item.fromJson(jsonDecode(response.body)) : null;
-    List<Appointment>? appointments = item?.reservations
+    List<Appointment>? appointments = reservations
         ?.map((e) => Appointment(
             id: e.id,
             startTime: e.startTime,
@@ -170,6 +164,19 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
     }
 
     return appointments;
+  }
+
+  Future<List<Reservation>?> fetchReservations() async {
+    Response response = await Backend.getItemByItem(widget.item.id.toString());
+
+    if (response.statusCode != 200) {
+      debugPrint("Error: response status code != 200: ${response.statusCode}");
+      return [];
+    }
+
+    Item? item =
+        response.body != "" ? Item.fromJson(jsonDecode(response.body)) : null;
+    return item?.reservations;
   }
 }
 
