@@ -20,7 +20,6 @@ class MyHouseWidget extends StatefulWidget {
 class _MyHouseWidgetState extends State<MyHouseWidget> {
   TextEditingController nameController = TextEditingController();
 
-  List<String> usernames = <String>['A', 'B', 'C']; //Dummy usernames
   List<dynamic> users = [];
   String houseId = '';
   House? currentHouse;
@@ -95,7 +94,7 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
                     const SizedBox(
                       height: SIZEDBOXHEIGHT,
                     ),
-                    Text("${usernames.length} members"),
+                    (users.length > 1) ? Text("${users.length} members") : Text("${users.length} member"),
                     const Divider(),
                     ListView.separated(
                       padding: const EdgeInsets.all(8),
@@ -164,9 +163,6 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
         var resUsers = await Backend.getHouseUsers(houseId);
 
         if (resUsers.statusCode == 200) {
-          print(resUsers.body);
-          print(json.decode(resUsers.body));
-
           setState(() {
             users = jsonDecode(resUsers.body);
           });
@@ -186,6 +182,8 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
     var res = await Backend.removeHouseFromUser(CurrentUser.id);
 
     if (res.statusCode == 200) {
+      final preferences = await SharedPreferences.getInstance();
+      preferences.remove("houseid");
       if (context.mounted) {
         // Return to device overview
         Navigator.pushReplacement(
