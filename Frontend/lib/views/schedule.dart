@@ -45,25 +45,103 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
             } else {
               // Data is now definitely present.
               source = ReservationsDataSource.withSource(snap.data ?? []);
-              return SfCalendar(
-                view: CalendarView.week,
-                onTap: _onTap,
-                dataSource: source,
-                onLongPress: _onLongPress,
+              return Column(
+                children: [
+                  Row(
+                    children: [
+                      TextButton(
+                          onPressed: onMessageButtonClicked,
+                          child: const Text("Notify last user"))
+                    ],
+                  ),
+                  SfCalendar(
+                    view: CalendarView.week,
+                    onTap: _onTap,
+                    dataSource: source,
+                    onLongPress: _onLongPress,
+                  ),
+                ],
               );
             }
           },
         ));
   }
 
-  void _updateReservation(DateTime startTime, DateTime endTime, String reservationId) async {
+  void onMessageButtonClicked() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Notify user?'),
+          content: const Text(
+              'This sends a notification to the user who last used the current device to release the device.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () async {
+                var lastReservation = await getLastReservation();
+                if (lastReservation != null && lastReservation.user != null) {
+                  var res = await Backend.sendMessage(
+                      lastReservation.user!.id.toString(),
+                      "Your reservation is over. Please free the ${widget.item.name}");
+                  if (res.statusCode == 200) {
+                    debugPrint("Successfully sent notification");
+                    showSnackBar("Successful");
+                    return;
+                  } else {
+                    debugPrint("Error sending message: ${res.statusCode}");
+                  }
+                } else {
+                  debugPrint("No last reservation found");
+                }
+                showSnackBar("Message could not be sent.");
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<Reservation?> getLastReservation() async {
+    var reservations = await fetchReservations();
+
+    reservations?.sort((a, b) => a.startTime.compareTo(b.startTime));
+
+    Reservation? previousReservation;
+
+    DateTime now = DateTime.now();
+
+    if (reservations != null) {
+      for (int i = 0; i < reservations.length; i++) {
+        if (now.isAfter(reservations[i].startTime) &&
+            now.isBefore(reservations[i].endTime)) {
+          if (i > 0) {
+            previousReservation = reservations[i - 1];
+          }
+          break;
+        }
+      }
+    }
+    return previousReservation;
+  }
+
+  void _updateReservation(
+      DateTime startTime, DateTime endTime, String reservationId) async {
     try {
       Appointment reservation = Appointment(
         startTime: startTime,
         endTime: endTime,
       );
 
-      final response = await Backend.updateReservation(CurrentUser.id, reservationId, reservation);
+      final response = await Backend.updateReservation(
+          CurrentUser.id, reservationId, reservation);
 
       // Handle the response as needed
       debugPrint('Update Reservation Response: ${response.statusCode}');
@@ -73,10 +151,10 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
     }
   }
 
-
   void _deleteReservation(String reservationId) async {
     try {
-      final response = await Backend.deleteReservation(CurrentUser.id, reservationId);
+      final response =
+          await Backend.deleteReservation(CurrentUser.id, reservationId);
 
       // Handle the response as needed
       debugPrint('Delete Reservation Response: ${response.statusCode}');
@@ -99,7 +177,8 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
             _deleteReservation(selectedAppointment.subject);
 
             source.appointments?.add(selectedAppointment);
-            source.notifyListeners(CalendarDataSourceAction.remove, [selectedAppointment]);
+            source.notifyListeners(
+                CalendarDataSourceAction.remove, [selectedAppointment]);
           },
         );
       }));
@@ -138,6 +217,14 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
 
       source.appointments?.add(app);
       source.notifyListeners(CalendarDataSourceAction.add, [app]);
+    }
+  }
+
+  void showSnackBar(String message) {
+    var snackBar = SnackBar(content: Text(message));
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 

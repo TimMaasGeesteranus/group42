@@ -188,8 +188,8 @@ class Backend {
     );
   }
 
-  static Future<http.Response> changeUser(
-      String userId, UpdateUser changedUser) {
+  static Future<http.Response> changeUser(String userId,
+      UpdateUser changedUser) {
     return http.put(
       Uri.parse('$host/users/edit-user/$userId'),
       headers: <String, String>{
@@ -197,6 +197,17 @@ class Backend {
         'accept': '*/*',
       },
       body: jsonEncode(changedUser),
+    );
+  }
+
+  static Future<http.Response> sendMessage(String userId, String content) {
+    return http.post(
+      Uri.parse('$host/users/sendMessage/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: json.encode(content),
     );
   }
 }
