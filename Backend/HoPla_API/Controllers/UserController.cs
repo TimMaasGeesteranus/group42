@@ -1,4 +1,5 @@
-﻿using HoPla_API.Context;
+﻿using FirebaseAdmin.Messaging;
+using HoPla_API.Context;
 using HoPla_API.Entities;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
@@ -73,6 +74,7 @@ namespace HoPla_API.Controllers
                         Name = model.Name,
                         Password = HashPassword(model.Password),
                         HasPremium = false,
+                        FirebaseId = model.FirebaseId,
                     };
 
                     _appDbContext.Users.Add(user);
@@ -250,7 +252,8 @@ namespace HoPla_API.Controllers
                     return NotFound("User or item not found.");
                 }
 
-                var reservation = new Reservation { 
+                var reservation = new Reservation
+                {
                     User = user,
                     StartTime = reservationRequest.StartTime,
                     EndTime = reservationRequest.EndTime
@@ -323,6 +326,47 @@ namespace HoPla_API.Controllers
                 await _appDbContext.SaveChangesAsync();
 
                 return Ok($"Reservation {reservation.Id} updated for user {user.Id}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.InnerException.Message);
+            }
+        }
+
+        [HttpPost("sendMessage/{userId}")]
+        public async Task<IActionResult> SendMessage(int userId, String messageContent)
+        {
+            try
+            {
+                User user = _appDbContext.Users.FirstOrDefault(u => u.Id == userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                // This registration token comes from the client FCM SDKs.
+                var registrationToken = "";
+
+                // See documentation on defining a message payload.
+                var message = new Message()
+                {
+                    Notification = new Notification
+                    {
+                        Title = "HoPla Notification",
+                        Body = messageContent
+                    },
+                    Token = registrationToken,
+                };
+
+                // Send a message to the device corresponding to the provided
+                // registration token.
+                string response = await FirebaseMessaging.DefaultInstance.SendAsync(message);
+                // Response is a message ID string.
+                Console.WriteLine("Successfully sent message: " + response);
+
+                
+                return Ok(response);
             }
             catch (Exception ex)
             {
