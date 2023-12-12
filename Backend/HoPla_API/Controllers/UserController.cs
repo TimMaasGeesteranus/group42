@@ -345,10 +345,6 @@ namespace HoPla_API.Controllers
                     return NotFound("User not found.");
                 }
 
-                // This registration token comes from the client FCM SDKs.
-                var registrationToken = "";
-
-                // See documentation on defining a message payload.
                 var message = new Message()
                 {
                     Notification = new Notification
@@ -356,7 +352,7 @@ namespace HoPla_API.Controllers
                         Title = "HoPla Notification",
                         Body = messageContent
                     },
-                    Token = registrationToken,
+                    Token = user.FirebaseId,
                 };
 
                 // Send a message to the device corresponding to the provided
