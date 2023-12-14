@@ -34,16 +34,20 @@ namespace HoPla_API.Controllers
             return BadRequest("Input must be int!");
         }
 
-        [HttpPost]
-        public IActionResult CreateHouse([FromBody] HouseInputModel houseInput)
+        [HttpPost("{userId}")]
+        public IActionResult CreateHouse(int userId, [FromBody] HouseInputModel houseInput)
         {
             if (ModelState.IsValid)
             {
+                User user = _appDbContext.Users.FirstOrDefault(u => u.Id == userId);
+
                 House newHouse = new House(houseInput.Name, houseInput.HasPremium)
                 {
                     HouseSize = 15,
                 };
 
+                user.House = newHouse;
+                _appDbContext.Users.Update(user);
                 _appDbContext.Houses.Add(newHouse);
                 _appDbContext.SaveChanges();
 
@@ -106,6 +110,31 @@ namespace HoPla_API.Controllers
                 }
             }
 
+            return BadRequest("Input must be int!");
+        }
+
+        [HttpGet("{id}/users")]
+        public IActionResult GetHouseUsers(string id)
+        {
+            if (int.TryParse(id, out var houseId))
+            {
+                var users = _appDbContext.Users
+                .Where(u => u.House != null && u.House.Id == houseId)
+                .Select(u => new UpdateUser
+                {
+                    Email = u.Email,
+                    Name = u.Name,
+                    HasPremium = u.HasPremium
+                })
+                .ToList();
+
+                if (users == null)
+                {
+                    return NotFound("House not found");
+                }
+
+                return Ok(users);
+            }
             return BadRequest("Input must be int!");
         }
     }

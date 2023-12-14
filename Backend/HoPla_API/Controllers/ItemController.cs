@@ -25,7 +25,7 @@ namespace HoPla_API.Controllers
             {
                 try
                 {
-                    Item item = _appDbContext.Items.Include(i => i.Reservations).Single(x => x.Id == itemId);
+                    Item item = _appDbContext.Items.Include(i => i.Reservations).ThenInclude(i => i.User).Single(x => x.Id == itemId);
                     return Ok(item);
                 }
                 catch
