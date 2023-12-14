@@ -93,14 +93,20 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                   if (res.statusCode == 200) {
                     debugPrint("Successfully sent notification");
                     showSnackBar("Successful");
+                    Navigator.of(context).pop();
                     return;
                   } else {
                     debugPrint("Error sending message: ${res.statusCode}");
+                    Navigator.of(context).pop();
+                    return;
                   }
                 } else {
                   debugPrint("No last reservation found");
+                  Navigator.of(context).pop();
+                  return;
                 }
                 showSnackBar("Message could not be sent.");
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -112,7 +118,7 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
   Future<Reservation?> getLastReservation() async {
     var reservations = await fetchReservations();
 
-    reservations?.sort((a, b) => a.startTime.compareTo(b.startTime));
+    reservations?.sort((a, b) => b.startTime.compareTo(a.startTime));
 
     Reservation? previousReservation;
 
@@ -120,11 +126,8 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
 
     if (reservations != null) {
       for (int i = 0; i < reservations.length; i++) {
-        if (now.isAfter(reservations[i].startTime) &&
-            now.isBefore(reservations[i].endTime)) {
-          if (i > 0) {
-            previousReservation = reservations[i - 1];
-          }
+        if (now.isAfter(reservations[i].startTime)) {
+          previousReservation = reservations[i];
           break;
         }
       }
