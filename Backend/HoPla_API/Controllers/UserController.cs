@@ -334,7 +334,7 @@ namespace HoPla_API.Controllers
         }
 
         [HttpPost("sendMessage/{userId}")]
-        public async Task<IActionResult> SendMessage(int userId, String messageContent)
+        public async Task<IActionResult> SendMessage(int userId, String messageString)
         {
             try
             {
@@ -350,7 +350,7 @@ namespace HoPla_API.Controllers
                     Notification = new Notification
                     {
                         Title = "HoPla Notification",
-                        Body = messageContent
+                        Body = messageString
                     },
                     Token = user.FirebaseId,
                 };

@@ -203,13 +203,15 @@ class Backend {
   }
 
   static Future<http.Response> sendMessage(String userId, String content) {
+    final data = {"messageString": content};
+
     return http.post(
       Uri.parse('$host/users/sendMessage/$userId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
       },
-      body: json.encode(content),
+      body: json.encode(data),
     );
   }
 }
