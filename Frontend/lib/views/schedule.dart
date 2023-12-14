@@ -162,7 +162,7 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
             id: e.id,
             startTime: e.startTime,
             endTime: e.endTime,
-            subject: e.id.toString()))
+            subject: e.user?.name ?? e.id.toString()))
         .toList();
 
     if (appointments == null) {
