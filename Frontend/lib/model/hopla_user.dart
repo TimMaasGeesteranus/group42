@@ -12,6 +12,7 @@ class User {
   String password;
   bool hasPremium;
   House? house;
+  String? firebaseId;
 
   User({
     required this.id,
@@ -20,6 +21,7 @@ class User {
     required this.password,
     required this.hasPremium,
     this.house,
+    this.firebaseId,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

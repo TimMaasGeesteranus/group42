@@ -13,12 +13,18 @@ class Backend {
   static const String host = "http://34.245.145.71:80";
 
   static Future<http.Response> register(
-      String email, String name, String password) async {
-    final jsonData = {
+      String email, String name, String password, String? firebaseId) async {
+    var jsonData = {
       'email': email,
       'name': name,
       'password': password,
     };
+
+    if (firebaseId != null) {
+      jsonData["firebaseId"] = firebaseId;
+    } else {
+      jsonData["firebaseId"] = "";
+    }
 
     return http.post(
       Uri.parse('$host/Users/register'),
@@ -218,8 +224,8 @@ class Backend {
     );
   }
 
-  static Future<http.Response> changeUser(
-      String userId, UpdateUser changedUser) {
+  static Future<http.Response> changeUser(String userId,
+      UpdateUser changedUser) {
     return http.put(
       Uri.parse('$host/users/edit-user/$userId'),
       headers: <String, String>{
@@ -238,6 +244,17 @@ class Backend {
         'Content-Type': 'application/json',
         'accept': '*/*',
       },
+    );
+  }
+
+  static Future<http.Response> sendMessage(String userId, String content) {
+    return http.post(
+      Uri.parse('$host/users/sendMessage/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: json.encode(content),
     );
   }
 }
