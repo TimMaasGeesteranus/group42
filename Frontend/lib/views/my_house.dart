@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ho_pla/util/current_user.dart';
+import 'package:ho_pla/views/new_house.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/house.dart';
@@ -88,13 +89,9 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
                     const SizedBox(
                       height: SIZEDBOXHEIGHT,
                     ),
-                    const Text("House Size"),
-                    const Divider(),
-                    Text(houseSize.toString()),
-                    const SizedBox(
-                      height: SIZEDBOXHEIGHT,
-                    ),
-                    (users.length > 1) ? Text("${users.length} members") : Text("${users.length} member"),
+                    (users.length > 1)
+                        ? Text("${users.length} members / $houseSize max")
+                        : Text("${users.length} member  / $houseSize max"),
                     const Divider(),
                     ListView.separated(
                       padding: const EdgeInsets.all(8),
@@ -155,6 +152,7 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
 
         setState(() {
           hasPremium = houseById.hasPremium;
+          houseSize = houseById.houseSize;
         });
 
         currentHouse = houseById;
@@ -184,13 +182,12 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
     if (res.statusCode == 200) {
       final preferences = await SharedPreferences.getInstance();
       preferences.remove("houseid");
+      showMessage("Left house");
       if (context.mounted) {
         // Return to device overview
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => DevicesOverviewWidget(
-                    houseId))); //TODO:What screen to go to?
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const NewHouseWidget()),
+            (Route<dynamic> route) => false);
       }
       return;
     } else {
@@ -205,12 +202,12 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
         showError("House Name cannot be empty");
       } else {
         var res = await Backend.updateHouse(
-            houseId, null); //TODO: Replace null with correct class
-
+            houseId, nameController.text, hasPremium, houseSize);
         if (res.statusCode == 200) {
           if (context.mounted) {
             // Return to device overview
-            Navigator.pushReplacement(
+            showMessage("Changes saved!");
+            Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => DevicesOverviewWidget(houseId)));

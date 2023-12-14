@@ -77,7 +77,7 @@ class _NewHouseWidgetState extends State<NewHouseWidget> {
         showError("Name cannot be empty");
       } else {
         var res = await Backend.createHouse(int.parse(CurrentUser.id),
-            nameController.text, false, 10); //TODO: Replace dummy values
+            nameController.text, false); //TODO: check premium of user
 
         if (res.statusCode == 201) {
           House newHouse = House.fromJson(jsonDecode(res.body));
@@ -154,6 +154,7 @@ class _NewHouseWidgetState extends State<NewHouseWidget> {
                     joinHouse = true;
                   });
                 }),
+          const TextSpan(text: " by its House Id"),
         ],
       ),
     );

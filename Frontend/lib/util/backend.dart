@@ -151,12 +151,12 @@ class Backend {
   }
 
   static Future<http.Response> createHouse(
-      int userId, String name, bool hasPremium, int houseSize) {
+      int userId, String name, bool hasPremium) {
     final jsonData = {
       'UserId': userId,
       'Name': name,
       'HasPremium' : hasPremium,
-      'HouseSize' : houseSize
+      'HouseSize' : 420
     };
 
     return http.post(
@@ -170,10 +170,11 @@ class Backend {
   }
 
   static Future<http.Response> updateHouse(
-      String houseId, House? house) { //TODO: Remove nullable (used for testing now)
+      String houseId, String name, bool hasPremium, int houseSize) {
     final jsonData = {
-      'HouseId': houseId,
-      'House': house //TODO: Convert House class to HouseInputModel (see backend)
+      'Name': name,
+      'HasPremium' : hasPremium,
+      'HouseSize' : houseSize
     };
 
     return http.put(
