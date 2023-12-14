@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../model/hopla_user.dart';
 import 'backend.dart';
 
 class WidgetWithRole extends StatefulWidget {
