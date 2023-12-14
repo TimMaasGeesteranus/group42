@@ -28,12 +28,10 @@ class _WidgetWithRoleState extends State<WidgetWithRole> {
   retrieveUserPlan() async {
       if (!userPlanRetrieved) {
         if (CurrentUser.id == "") {
-          print("getting user from preferences");
           final preferences = await SharedPreferences.getInstance();
           try {
             setState(() {
               CurrentUser.id = preferences.getString("userid")!;
-              print("Just set id to ${CurrentUser.id}");
             });
           } on Error catch (e, _) {
             showError('Error retrieving the user id from the preferences');
@@ -41,13 +39,11 @@ class _WidgetWithRoleState extends State<WidgetWithRole> {
         }
         var res = await Backend.getUser(CurrentUser.id);
         if (res.statusCode == 200) {
-          print("user yeeted from backend");
-          User userById = User.fromJson(jsonDecode(res.body));
+          Map<String, dynamic> data = jsonDecode(res.body);
           setState(() {
-            CurrentUser.hasPremium = userById.hasPremium;
+            CurrentUser.hasPremium = data['hasPremium'];
           });
         }
-        print(CurrentUser.id);
         userPlanRetrieved = true;
       }
       return;
