@@ -11,6 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'firebase_options.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 Future<void> main() async {
   WidgetsFlutterBinding
       .ensureInitialized(); // Required for using plugins before runApp
@@ -46,11 +48,16 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final bool darkMode;
 
   const MyApp({super.key, required this.darkMode});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     Widget firstWidget;
@@ -65,13 +72,41 @@ class MyApp extends StatelessWidget {
     }
 
     return ThemeProvider(
-        initTheme: darkMode ? customDarkTheme : ThemeData.light(),
+        initTheme: widget.darkMode ? customDarkTheme : ThemeData.light(),
         builder: (context, myTheme) {
           return MaterialApp(
             title: 'HoPla Demo',
             theme: myTheme,
+            navigatorKey: navigatorKey,
             home: firstWidget,
           );
         });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // handle firebase notification if app is in foreground
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      debugPrint("Received foreground notification");
+
+      if (notification != null && notification.body != null) {
+        showDialog(
+            context: navigatorKey.currentContext!,
+            builder: (context) => Center(
+                  child: Material(
+                    color: Colors.transparent,
+                    child:
+                        Text("Received a notification:\n${notification.body!}"),
+                  ),
+                ));
+
+        debugPrint("Showed notification");
+      } else {
+        debugPrint("Received an empty notification");
+      }
+    });
   }
 }
