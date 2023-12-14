@@ -22,6 +22,8 @@ class Backend {
 
     if (firebaseId != null) {
       jsonData["firebaseId"] = firebaseId;
+    } else {
+      jsonData["firebaseId"] = "";
     }
 
     return http.post(
