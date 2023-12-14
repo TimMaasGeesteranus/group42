@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "532565660515",
+    "project_id": "ho-pla",
+    "storage_bucket": "ho-pla.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:532565660515:android:7856cae2942d495e4ff956",
+        "android_client_info": {
+          "package_name": "tech.hopla.ho_pla"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCREjdb-Jzpn4g0uUIYzL3faarAbuYuUng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

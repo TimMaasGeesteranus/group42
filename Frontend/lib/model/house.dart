@@ -9,12 +9,14 @@ class House {
   int id;
   String name;
   bool hasPremium;
+  int houseSize;
   List<Item> items;
 
   House({
     required this.id,
     required this.name,
     required this.hasPremium,
+    required this.houseSize,
     required this.items,
   });
 

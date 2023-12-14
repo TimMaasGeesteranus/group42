@@ -5,20 +5,26 @@ import 'package:ho_pla/util/current_user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-
 import '../model/hopla_update_user.dart';
+import '../model/house.dart';
 
 class Backend {
   // Use alias for localhost
   static const String host = "http://34.245.145.71:80";
 
   static Future<http.Response> register(
-      String email, String name, String password) async {
-    final jsonData = {
+      String email, String name, String password, String? firebaseId) async {
+    var jsonData = {
       'email': email,
       'name': name,
       'password': password,
     };
+
+    if (firebaseId != null) {
+      jsonData["firebaseId"] = firebaseId;
+    } else {
+      jsonData["firebaseId"] = "";
+    }
 
     return http.post(
       Uri.parse('$host/Users/register'),
@@ -145,15 +151,50 @@ class Backend {
   }
 
   static Future<http.Response> createHouse(
-      String name, bool hasPremium, int houseSize) {
+      int userId, String name, bool hasPremium) {
+    final jsonData = {
+      'UserId': userId,
+      'Name': name,
+      'HasPremium' : hasPremium,
+      'HouseSize' : 420
+    };
+
+    return http.post(
+      Uri.parse('$host/house/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: json.encode(jsonData),
+    );
+  }
+
+  static Future<http.Response> updateHouse(
+      String houseId, String name, bool hasPremium, int houseSize) {
     final jsonData = {
       'Name': name,
       'HasPremium' : hasPremium,
       'HouseSize' : houseSize
     };
 
+    return http.put(
+      Uri.parse('$host/House/$houseId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: json.encode(jsonData),
+    );
+  }
+
+  static Future<http.Response> removeHouseFromUser(
+      String userId) {
+    final jsonData = {
+      'UserId': userId,
+    };
+
     return http.post(
-      Uri.parse('$host/house'),
+      Uri.parse('$host/users/remove-house/$userId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'accept': '*/*',
@@ -184,8 +225,8 @@ class Backend {
     );
   }
 
-  static Future<http.Response> changeUser(
-      String userId, UpdateUser changedUser) {
+  static Future<http.Response> changeUser(String userId,
+      UpdateUser changedUser) {
     return http.put(
       Uri.parse('$host/users/edit-user/$userId'),
       headers: <String, String>{
@@ -193,6 +234,28 @@ class Backend {
         'accept': '*/*',
       },
       body: jsonEncode(changedUser),
+    );
+  }
+
+  static Future<http.Response> getHouseUsers(
+      String houseId) {
+    return http.get(
+      Uri.parse('$host/house/$houseId/users'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+    );
+  }
+
+  static Future<http.Response> sendMessage(String userId, String content) {
+    return http.post(
+      Uri.parse('$host/users/sendMessage/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+      body: json.encode(content),
     );
   }
 }

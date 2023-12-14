@@ -23,15 +23,18 @@ namespace HoPla_API.Entities
 
         public House? House { get; set; }
 
+        public string? FirebaseId { get; set; }
+
         public User() { }
 
-        public User(string email, string name, string password, bool hasPremium, House house)
+        public User(string email, string name, string password, bool hasPremium, House house, string firebaseId)
         {
             Email = email;
             Name = name;
             Password = password;
             HasPremium = hasPremium;
             House = house;
+            FirebaseId = firebaseId;
         }
     }
 
@@ -40,6 +43,7 @@ namespace HoPla_API.Entities
         public string Email { get; set; }
         public string Name { get; set; }
         public string Password { get; set; }
+        public string FirebaseId { get; set; }
     }
 
     public class LoginModel

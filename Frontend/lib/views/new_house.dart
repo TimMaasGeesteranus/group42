@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:ho_pla/views/devices_overview.dart';
@@ -18,6 +19,12 @@ class NewHouseWidget extends StatefulWidget {
 
 class _NewHouseWidgetState extends State<NewHouseWidget> {
   TextEditingController nameController = TextEditingController();
+  TextEditingController idController = TextEditingController();
+
+  TextStyle defaultStyle = const TextStyle(color: Colors.black);
+  TextStyle linkStyle = const TextStyle(color: Colors.blue);
+
+  bool joinHouse = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +38,9 @@ class _NewHouseWidgetState extends State<NewHouseWidget> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text("Give your new House a name"),
+                const SizedBox(
+                  height: 10,
+                ),
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(
@@ -38,10 +48,25 @@ class _NewHouseWidgetState extends State<NewHouseWidget> {
                     border: OutlineInputBorder(),
                   ),
                 ),
+                const SizedBox(
+                  height: 20,
+                ),
                 ElevatedButton(
                   onPressed: onCreateClicked,
                   child: const Text('Create'),
-                )
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                if (joinHouse)
+                  getJoinWidget(),
+                if (!joinHouse)
+                  askJoinWidget(),
+
+
               ],
             )));
   }
@@ -50,10 +75,9 @@ class _NewHouseWidgetState extends State<NewHouseWidget> {
     try {
       if (nameController.text.isEmpty) {
         showError("Name cannot be empty");
-      }
-      else {
-        var res = await Backend.createHouse(
-            nameController.text, false, 10); //TODO: Replace dummy values
+      } else {
+        var res = await Backend.createHouse(int.parse(CurrentUser.id),
+            nameController.text, false); //TODO: check premium of user
 
         if (res.statusCode == 201) {
           House newHouse = House.fromJson(jsonDecode(res.body));
@@ -66,8 +90,10 @@ class _NewHouseWidgetState extends State<NewHouseWidget> {
 
           if (context.mounted) {
             // Return to device overview
-            Navigator.pushReplacement(context, MaterialPageRoute(
-                builder: (context) => DevicesOverviewWidget(houseId)));
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DevicesOverviewWidget(houseId)));
           }
 
           return;
@@ -78,6 +104,81 @@ class _NewHouseWidgetState extends State<NewHouseWidget> {
     } on Exception catch (e, _) {
       showError('Error creating the house');
     }
+  }
+
+  onJoinClicked() async {
+    try {
+      if (idController.text.isEmpty) {
+        showError("Id cannot be empty");
+      } else {
+        String houseId = idController.text;
+        var res = await Backend.joinHouse(CurrentUser.id,
+            houseId);
+
+        if (res.statusCode == 200) {
+
+          final preferences = await SharedPreferences.getInstance();
+          preferences.setString("houseid", houseId);
+          CurrentUser.houseId = houseId;
+
+          if (context.mounted) {
+            // Return to device overview
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DevicesOverviewWidget(houseId)));
+          }
+
+          return;
+        } else {
+          showError('Could not join the house: status ${res.statusCode}');
+        }
+      }
+    } on Exception catch (e, _) {
+      showError('Error joining the house');
+    }
+  }
+
+  Widget askJoinWidget() {
+    return RichText(
+      text: TextSpan(
+        style: defaultStyle,
+        children: <TextSpan>[
+          const TextSpan(text: 'Or '),
+          TextSpan(
+              text: 'join an already existing house',
+              style: linkStyle,
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  setState(() {
+                    joinHouse = true;
+                  });
+                }),
+          const TextSpan(text: " by its House Id"),
+        ],
+      ),
+    );
+  }
+
+  Widget getJoinWidget() {
+    return Column(
+      children: [
+        TextField(
+          controller: idController,
+          decoration: const InputDecoration(
+            labelText: "House Id",
+            border: OutlineInputBorder(),
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        ElevatedButton(
+          onPressed: onJoinClicked,
+          child: const Text('Join'),
+        ),
+      ],
+    );
   }
 
   void showError(String message) {
