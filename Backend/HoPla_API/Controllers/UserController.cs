@@ -338,7 +338,7 @@ namespace HoPla_API.Controllers
         {
             try
             {
-                Console.WriteLine(messageString);
+                return Ok(messageString);
                 User user = _appDbContext.Users.FirstOrDefault(u => u.Id == userId);
 
                 if (user == null)
