@@ -58,4 +58,9 @@ namespace HoPla_API.Entities
         public string Name { get; set; }
         public bool HasPremium { get; set; }
     }
+
+    public class SendMessage
+    {
+        public string messageString { get; set; }
+    }
 }

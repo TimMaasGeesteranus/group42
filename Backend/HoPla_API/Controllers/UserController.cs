@@ -334,11 +334,10 @@ namespace HoPla_API.Controllers
         }
 
         [HttpPost("sendMessage/{userId}")]
-        public async Task<IActionResult> SendMessage(int userId, String messageString)
+        public async Task<IActionResult> SendMessage(int userId, SendMessage messageModel)
         {
             try
             {
-                return Ok(messageString);
                 User user = _appDbContext.Users.FirstOrDefault(u => u.Id == userId);
 
                 if (user == null)
@@ -351,7 +350,7 @@ namespace HoPla_API.Controllers
                     Notification = new Notification
                     {
                         Title = "HoPla Notification",
-                        Body = messageString
+                        Body = messageModel.messageString
                     },
                     Token = user.FirebaseId,
                 };
