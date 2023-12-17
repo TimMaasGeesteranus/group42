@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -6,7 +5,6 @@ import 'package:flutter/rendering.dart';
 import 'package:ho_pla/model/item.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:ho_pla/util/ho_pla_scaffold.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -56,13 +54,8 @@ class _QrCodeWidgetState extends State<QrCodeWidget> {
 
     if (byteData != null) {
       final pngBytes = byteData.buffer.asUint8List();
-      // getting directory of our phone
-      final directory = await getTemporaryDirectory();
-      final path = directory.path;
-      final imgFile = File('$path/qr.png');
-
-      await imgFile.writeAsBytes(pngBytes);
-      await Share.shareFiles([imgFile.path], text: 'QR Code');
+      var xFile = XFile.fromData(pngBytes, mimeType: "image/png");
+      await Share.shareXFiles([xFile]);
     }
   }
 }
