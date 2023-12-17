@@ -32,7 +32,10 @@ class _QrCodeWidgetState extends State<QrCodeWidget> {
     return HoPlaScaffold(
         "QR Code Generator",
         Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Text(
+                "You can share the QR Code to your printer and print it there. Once printed put it up at the device."),
             RepaintBoundary(
               key: qrKey,
               child: QrImageView(
