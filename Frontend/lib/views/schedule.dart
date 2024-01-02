@@ -202,6 +202,9 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
           onConfirm: (DateTime startTime, DateTime endTime) {
             _updateReservation(
                 startTime, endTime, selectedAppointment.id.toString());
+
+            source.notifyListeners(
+                CalendarDataSourceAction.reset, [selectedAppointment]);
           },
           onDelete: () {
             _deleteReservation(selectedAppointment.id.toString());
@@ -210,6 +213,8 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
             source.notifyListeners(
                 CalendarDataSourceAction.remove, [selectedAppointment]);
           },
+          formerStart: selectedAppointment.startTime,
+          formerEnd: selectedAppointment.endTime,
         );
       }));
     }

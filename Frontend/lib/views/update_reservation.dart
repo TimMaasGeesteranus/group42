@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 class UpdateReservationWidget extends StatefulWidget {
   final Function(DateTime startTime, DateTime endTime) onConfirm;
   final Function() onDelete;
+  final DateTime formerStart;
+  final DateTime formerEnd;
 
   const UpdateReservationWidget({
     Key? key,
     required this.onConfirm,
     required this.onDelete,
+    required this.formerStart,
+    required this.formerEnd,
   }) : super(key: key);
 
   @override
@@ -90,16 +94,16 @@ class _UpdateReservationWidgetState extends State<UpdateReservationWidget> {
         TextButton(
           onPressed: () {
             DateTime startDateTime = DateTime(
-              DateTime.now().year,
-              DateTime.now().month,
-              DateTime.now().day,
+              widget.formerStart.year,
+              widget.formerStart.month,
+              widget.formerStart.day,
               selectedStartTime.hour,
               selectedStartTime.minute,
             );
             DateTime endDateTime = DateTime(
-              DateTime.now().year,
-              DateTime.now().month,
-              DateTime.now().day,
+              widget.formerEnd.year,
+              widget.formerEnd.month,
+              widget.formerEnd.day,
               selectedEndTime.hour,
               selectedEndTime.minute,
             );
