@@ -1,11 +1,11 @@
 import 'dart:convert';
 
+import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:ho_pla/model/reservation.dart';
 import 'package:ho_pla/util/backend.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:ho_pla/util/duration_util.dart';
-import 'package:ho_pla/views/change_default_duration.dart';
 import 'package:ho_pla/views/update_reservation.dart';
 import 'package:http/http.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -237,10 +237,19 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
     }
   }
 
-  void changeDefaultDuration() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ChangeDefaultDurationWidget(widget.item.id);
-    })).then((value) => _setSavedDefaultDuration());
+  void changeDefaultDuration() async {
+    final resultingDuration = await showDurationPicker(
+      context: context,
+      initialTime: defaultDuration,
+      baseUnit: BaseUnit.minute,
+    );
+
+    if (resultingDuration != null) {
+      saveDefaultDuration(resultingDuration, widget.item.id);
+      setState(() {
+        defaultDuration = resultingDuration;
+      });
+    }
   }
 
   @override
@@ -254,13 +263,9 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
     Duration? savedDuration = await loadSavedDefaultDuration(widget.item.id);
     debugPrint("SavedDuration: $savedDuration");
     if (savedDuration != null) {
-      if (mounted) {
         setState(() {
           defaultDuration = savedDuration;
         });
-      } else {
-        defaultDuration = savedDuration;
-      }
     }
   }
 

@@ -40,3 +40,9 @@ Future<Duration?> loadSavedDefaultDuration(int itemId) async {
 
   return null;
 }
+
+void saveDefaultDuration(Duration toSave, int itemId) async {
+  final pref = await SharedPreferences.getInstance();
+  await pref.setString(
+      "defaultDurationOfDevice$itemId", durationToHoursMinutes(toSave));
+}
