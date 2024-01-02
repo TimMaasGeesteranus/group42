@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:ho_pla/util/ho_pla_theme.dart';
+import 'package:ho_pla/util/uni_links.dart';
 import 'package:ho_pla/views/devices_overview.dart';
 import 'package:ho_pla/views/login.dart';
 import 'package:ho_pla/views/new_house.dart';
@@ -33,6 +34,8 @@ Future<void> main() async {
       await FirebaseMessaging.instance.requestPermission(provisional: true);
 
   final token = await FirebaseMessaging.instance.getToken();
+
+  UniLinks.initUniLinks();
 
   if (token != null) {
     debugPrint(token);
