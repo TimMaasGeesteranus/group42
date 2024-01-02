@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:ho_pla/model/reservation.dart';
 import 'package:ho_pla/util/backend.dart';
 import 'package:ho_pla/util/current_user.dart';
+import 'package:ho_pla/util/duration_util.dart';
+import 'package:ho_pla/views/change_default_duration.dart';
 import 'package:ho_pla/views/update_reservation.dart';
 import 'package:http/http.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -22,6 +24,7 @@ class ScheduleWidget extends StatefulWidget {
 
 class _ScheduleWidgetState extends State<ScheduleWidget> {
   ReservationsDataSource source = ReservationsDataSource();
+  Duration defaultDuration = const Duration(hours: 1);
 
   /// This future will complete with the reservations fetched from the backend.
   late Future<List<Appointment>?> fetchAppointmentsFuture;
@@ -51,7 +54,10 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                     children: [
                       TextButton(
                           onPressed: onMessageButtonClicked,
-                          child: const Text("Notify last user"))
+                          child: const Text("Notify last user")),
+                      TextButton(
+                          onPressed: changeDefaultDuration,
+                          child: Text(durationToHoursMinutes(defaultDuration)))
                     ],
                   ),
                   SfCalendar(
@@ -231,10 +237,31 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
     }
   }
 
+  void changeDefaultDuration() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return ChangeDefaultDurationWidget(widget.item.id);
+    })).then((value) => _setSavedDefaultDuration());
+  }
+
   @override
   void initState() {
     super.initState();
+    _setSavedDefaultDuration();
     fetchAppointmentsFuture = fetchAppointments();
+  }
+
+  void _setSavedDefaultDuration() async {
+    Duration? savedDuration = await loadSavedDefaultDuration(widget.item.id);
+    debugPrint("SavedDuration: $savedDuration");
+    if (savedDuration != null) {
+      if (mounted) {
+        setState(() {
+          defaultDuration = savedDuration;
+        });
+      } else {
+        defaultDuration = savedDuration;
+      }
+    }
   }
 
   /// Async method that calls the backend
