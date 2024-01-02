@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:ho_pla/model/reservation.dart';
 import 'package:ho_pla/util/backend.dart';
 import 'package:ho_pla/util/current_user.dart';
+import 'package:ho_pla/util/duration_util.dart';
 import 'package:ho_pla/views/update_reservation.dart';
 import 'package:http/http.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -22,6 +24,7 @@ class ScheduleWidget extends StatefulWidget {
 
 class _ScheduleWidgetState extends State<ScheduleWidget> {
   ReservationsDataSource source = ReservationsDataSource();
+  Duration defaultDuration = const Duration(hours: 1);
 
   /// This future will complete with the reservations fetched from the backend.
   late Future<List<Appointment>?> fetchAppointmentsFuture;
@@ -51,7 +54,10 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                     children: [
                       TextButton(
                           onPressed: onMessageButtonClicked,
-                          child: const Text("Notify last user"))
+                          child: const Text("Notify last user")),
+                      TextButton(
+                          onPressed: changeDefaultDuration,
+                          child: Text(durationToHoursMinutes(defaultDuration)))
                     ],
                   ),
                   SfCalendar(
@@ -174,10 +180,11 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
         return UpdateReservationWidget(
           onConfirm: (DateTime startTime, DateTime endTime) {
-            _updateReservation(startTime, endTime, selectedAppointment.subject);
+            _updateReservation(
+                startTime, endTime, selectedAppointment.id.toString());
           },
           onDelete: () {
-            _deleteReservation(selectedAppointment.subject);
+            _deleteReservation(selectedAppointment.id.toString());
 
             source.appointments?.add(selectedAppointment);
             source.notifyListeners(
@@ -191,7 +198,7 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
   void _onTap(CalendarTapDetails details) async {
     var app = Appointment(
       startTime: details.date!,
-      endTime: details.date!.add(const Duration(minutes: 60)),
+      endTime: details.date!.add(defaultDuration),
       subject: 'Reservation',
       color: Colors.blue,
     );
@@ -199,8 +206,6 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
     var res = await Backend.addReservation(
         CurrentUser.id, widget.item.id.toString(), app);
 
-    // Find the ScaffoldMessenger in the widget tree
-    // and use it to show a SnackBar.
 
     if (res.statusCode != 200) {
       debugPrint(
@@ -212,6 +217,10 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     } else {
+      debugPrint(res.body.toString());
+      // Set id now
+      app.id = res.body.split(" ")[1];
+
       const snackBar = SnackBar(content: Text('Successful!'));
 
       if (context.mounted) {
@@ -231,10 +240,36 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
     }
   }
 
+  void changeDefaultDuration() async {
+    final resultingDuration = await showDurationPicker(
+      context: context,
+      initialTime: defaultDuration,
+      baseUnit: BaseUnit.minute,
+    );
+
+    if (resultingDuration != null) {
+      saveDefaultDuration(resultingDuration, widget.item.id);
+      setState(() {
+        defaultDuration = resultingDuration;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _setSavedDefaultDuration();
     fetchAppointmentsFuture = fetchAppointments();
+  }
+
+  void _setSavedDefaultDuration() async {
+    Duration? savedDuration = await loadSavedDefaultDuration(widget.item.id);
+    debugPrint("SavedDuration: $savedDuration");
+    if (savedDuration != null) {
+        setState(() {
+          defaultDuration = savedDuration;
+        });
+    }
   }
 
   /// Async method that calls the backend
