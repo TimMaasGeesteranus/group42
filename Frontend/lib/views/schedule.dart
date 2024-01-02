@@ -197,7 +197,7 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
   void _onTap(CalendarTapDetails details) async {
     var app = Appointment(
       startTime: details.date!,
-      endTime: details.date!.add(const Duration(minutes: 60)),
+      endTime: details.date!.add(defaultDuration),
       subject: 'Reservation',
       color: Colors.blue,
     );
