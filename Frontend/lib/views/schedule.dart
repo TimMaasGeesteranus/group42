@@ -180,10 +180,11 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
         return UpdateReservationWidget(
           onConfirm: (DateTime startTime, DateTime endTime) {
-            _updateReservation(startTime, endTime, selectedAppointment.subject);
+            _updateReservation(
+                startTime, endTime, selectedAppointment.id.toString());
           },
           onDelete: () {
-            _deleteReservation(selectedAppointment.subject);
+            _deleteReservation(selectedAppointment.id.toString());
 
             source.appointments?.add(selectedAppointment);
             source.notifyListeners(
@@ -205,8 +206,6 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
     var res = await Backend.addReservation(
         CurrentUser.id, widget.item.id.toString(), app);
 
-    // Find the ScaffoldMessenger in the widget tree
-    // and use it to show a SnackBar.
 
     if (res.statusCode != 200) {
       debugPrint(
@@ -218,6 +217,10 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     } else {
+      debugPrint(res.body.toString());
+      // Set id now
+      app.id = res.body.split(" ")[1];
+
       const snackBar = SnackBar(content: Text('Successful!'));
 
       if (context.mounted) {
