@@ -50,8 +50,9 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
               // Data is now definitely present.
               source = ReservationsDataSource.withSource(snap.data ?? []);
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Wrap(
                     children: [
                       TextButton(
                           onPressed: onMessageButtonClicked,
@@ -67,14 +68,17 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                       ),
                       TextButton(
                           onPressed: changeDefaultDuration,
-                          child: Text(durationToHoursMinutes(defaultDuration)))
+                          child: Text(
+                              "Change duration: ${durationToHoursMinutes(defaultDuration)}"))
                     ],
                   ),
-                  SfCalendar(
-                    view: CalendarView.week,
-                    onTap: _onTap,
-                    dataSource: source,
-                    onLongPress: _onLongPress,
+                  Expanded(
+                    child: SfCalendar(
+                      view: CalendarView.week,
+                      onTap: _onTap,
+                      dataSource: source,
+                      onLongPress: _onLongPress,
+                    ),
                   ),
                 ],
               );
