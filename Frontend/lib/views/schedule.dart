@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:ho_pla/model/reservation.dart';
 import 'package:ho_pla/util/backend.dart';
 import 'package:ho_pla/util/current_user.dart';
-import 'package:ho_pla/views/qr_code.dart';
 import 'package:ho_pla/util/duration_util.dart';
+import 'package:ho_pla/views/qr_code.dart';
 import 'package:ho_pla/views/update_reservation.dart';
 import 'package:http/http.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -62,7 +62,9 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                       TextButton(
                           onPressed: onQrCodeGenerationClicked,
                           child: const Text("Generate QR Code")),
-                          child: const Text("Notify last user")),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       TextButton(
                           onPressed: changeDefaultDuration,
                           child: Text(durationToHoursMinutes(defaultDuration)))
