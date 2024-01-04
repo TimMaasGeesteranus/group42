@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ho_pla/util/current_user.dart';
-import 'package:ho_pla/util/widget_with_role.dart';
 import 'package:ho_pla/views/new_house.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -131,9 +130,6 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red.shade200),
                         child: const Text('Leave House')),
-                    WidgetWithRole(
-                      child: Text("Ge bent PREMIUM, ouwe pikkebaas"),
-                    ),
                   ]),
             )),
             floatingActionButton: FloatingActionButton(
