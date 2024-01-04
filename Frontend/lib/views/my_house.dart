@@ -122,10 +122,14 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
                           const Divider(),
                       itemCount: users.length,
                     ),
+                    const SizedBox(
+                      height: SIZEDBOXHEIGHT * 1.3,
+                    ),
                     ElevatedButton(
-                      onPressed: onLeaveClicked,
-                      child: const Text('Leave House'),
-                    )
+                        onPressed: onLeaveClicked,
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red.shade200),
+                        child: const Text('Leave House')),
                   ]),
             )),
             floatingActionButton: FloatingActionButton(
@@ -164,8 +168,22 @@ class _MyHouseWidgetState extends State<MyHouseWidget> {
           setState(() {
             users = jsonDecode(resUsers.body);
           });
-        }
 
+          // If any user hasPremium and the house is not Premium, update the hasPremium flag of the house
+          if (!currentHouse!.hasPremium &&
+              users.any((user) => user['hasPremium'])) {
+            setState(() {
+              hasPremium = true;
+            });
+            var res = await Backend.updateHouse(
+                houseId, nameController.text, hasPremium, houseSize);
+            if (res.statusCode == 200) {
+              showMessage("Your house is now Premium!");
+            } else {
+              showError("Error activating Premium for the house");
+            }
+          }
+        }
         return;
       } else {
         showError(
