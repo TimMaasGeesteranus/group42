@@ -131,8 +131,6 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                   Navigator.of(context).pop();
                   return;
                 }
-                showSnackBar("Message could not be sent.");
-                Navigator.of(context).pop();
               },
             ),
           ],

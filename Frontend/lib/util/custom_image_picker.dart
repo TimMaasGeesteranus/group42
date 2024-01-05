@@ -27,7 +27,6 @@ class CustomImagePickerState extends State<CustomImagePicker> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    // TODO: send request to change image here
                     Navigator.pop(context, widget.imagePaths[index]);
                   },
                   child: Container(
