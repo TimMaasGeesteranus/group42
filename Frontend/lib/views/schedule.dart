@@ -159,7 +159,7 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
     return previousReservation;
   }
 
-  void _updateReservation(
+  Future<bool> _updateReservation(
       DateTime startTime, DateTime endTime, String reservationId) async {
     try {
       Appointment reservation = Appointment(
@@ -172,9 +172,12 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
 
       // Handle the response as needed
       debugPrint('Update Reservation Response: ${response.statusCode}');
+
+      return response.statusCode == 200;
     } catch (e) {
       // Handle errors
       debugPrint('Error updating reservation: $e');
+      return false;
     }
   }
 
@@ -200,12 +203,16 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
 
       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
         return UpdateReservationWidget(
-          onConfirm: (DateTime startTime, DateTime endTime) {
-            _updateReservation(
+          onConfirm: (DateTime startTime, DateTime endTime) async {
+            bool success = await _updateReservation(
                 startTime, endTime, selectedAppointment.id.toString());
 
-            source.notifyListeners(
-                CalendarDataSourceAction.reset, [selectedAppointment]);
+            if (success) {
+              source.notifyListeners(
+                  CalendarDataSourceAction.reset, [selectedAppointment]);
+            } else {
+              showSnackBar("Could not update");
+            }
           },
           onDelete: () async {
             var success =
