@@ -178,16 +178,19 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
     }
   }
 
-  void _deleteReservation(String reservationId) async {
+  Future<bool> _deleteReservation(String reservationId) async {
     try {
       final response =
           await Backend.deleteReservation(CurrentUser.id, reservationId);
 
       // Handle the response as needed
       debugPrint('Delete Reservation Response: ${response.statusCode}');
+
+      return response.statusCode == 200;
     } catch (e) {
       // Handle errors
       debugPrint('Error deleting reservation: $e');
+      return false;
     }
   }
 
@@ -204,12 +207,17 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
             source.notifyListeners(
                 CalendarDataSourceAction.reset, [selectedAppointment]);
           },
-          onDelete: () {
-            _deleteReservation(selectedAppointment.id.toString());
+          onDelete: () async {
+            var success =
+                await _deleteReservation(selectedAppointment.id.toString());
 
-            source.appointments?.add(selectedAppointment);
-            source.notifyListeners(
-                CalendarDataSourceAction.remove, [selectedAppointment]);
+            if (success) {
+              source.appointments?.add(selectedAppointment);
+              source.notifyListeners(
+                  CalendarDataSourceAction.remove, [selectedAppointment]);
+            } else {
+              showSnackBar("Could not delete");
+            }
           },
           formerStart: selectedAppointment.startTime,
           formerEnd: selectedAppointment.endTime,
