@@ -50,8 +50,9 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
               // Data is now definitely present.
               source = ReservationsDataSource.withSource(snap.data ?? []);
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Wrap(
                     children: [
                       TextButton(
                           onPressed: onMessageButtonClicked,
@@ -67,14 +68,17 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                       ),
                       TextButton(
                           onPressed: changeDefaultDuration,
-                          child: Text(durationToHoursMinutes(defaultDuration)))
+                          child: Text(
+                              "Change duration: ${durationToHoursMinutes(defaultDuration)}"))
                     ],
                   ),
-                  SfCalendar(
-                    view: CalendarView.week,
-                    onTap: _onTap,
-                    dataSource: source,
-                    onLongPress: _onLongPress,
+                  Expanded(
+                    child: SfCalendar(
+                      view: CalendarView.week,
+                      onTap: _onTap,
+                      dataSource: source,
+                      onLongPress: _onLongPress,
+                    ),
                   ),
                 ],
               );
@@ -127,8 +131,6 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                   Navigator.of(context).pop();
                   return;
                 }
-                showSnackBar("Message could not be sent.");
-                Navigator.of(context).pop();
               },
             ),
           ],
@@ -157,7 +159,7 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
     return previousReservation;
   }
 
-  void _updateReservation(
+  Future<bool> _updateReservation(
       DateTime startTime, DateTime endTime, String reservationId) async {
     try {
       Appointment reservation = Appointment(
@@ -170,22 +172,28 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
 
       // Handle the response as needed
       debugPrint('Update Reservation Response: ${response.statusCode}');
+
+      return response.statusCode == 200;
     } catch (e) {
       // Handle errors
       debugPrint('Error updating reservation: $e');
+      return false;
     }
   }
 
-  void _deleteReservation(String reservationId) async {
+  Future<bool> _deleteReservation(String reservationId) async {
     try {
       final response =
           await Backend.deleteReservation(CurrentUser.id, reservationId);
 
       // Handle the response as needed
       debugPrint('Delete Reservation Response: ${response.statusCode}');
+
+      return response.statusCode == 200;
     } catch (e) {
       // Handle errors
       debugPrint('Error deleting reservation: $e');
+      return false;
     }
   }
 
@@ -195,17 +203,32 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
 
       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
         return UpdateReservationWidget(
-          onConfirm: (DateTime startTime, DateTime endTime) {
-            _updateReservation(
+          onConfirm: (DateTime startTime, DateTime endTime) async {
+            bool success = await _updateReservation(
                 startTime, endTime, selectedAppointment.id.toString());
-          },
-          onDelete: () {
-            _deleteReservation(selectedAppointment.id.toString());
 
-            source.appointments?.add(selectedAppointment);
-            source.notifyListeners(
-                CalendarDataSourceAction.remove, [selectedAppointment]);
+            if (success) {
+              // Rather ugly reload as update is not possible
+              fetchAppointmentsFuture = fetchAppointments();
+              fetchAppointmentsFuture.then((value) => {setState(() {})});
+            } else {
+              showSnackBar("Could not update");
+            }
           },
+          onDelete: () async {
+            var success =
+                await _deleteReservation(selectedAppointment.id.toString());
+
+            if (success) {
+              source.appointments?.add(selectedAppointment);
+              source.notifyListeners(
+                  CalendarDataSourceAction.remove, [selectedAppointment]);
+            } else {
+              showSnackBar("Could not delete");
+            }
+          },
+          formerStart: selectedAppointment.startTime,
+          formerEnd: selectedAppointment.endTime,
         );
       }));
     }
