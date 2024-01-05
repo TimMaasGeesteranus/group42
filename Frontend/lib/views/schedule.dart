@@ -208,8 +208,9 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                 startTime, endTime, selectedAppointment.id.toString());
 
             if (success) {
-              source.notifyListeners(
-                  CalendarDataSourceAction.reset, [selectedAppointment]);
+              // Rather ugly reload as update is not possible
+              fetchAppointmentsFuture = fetchAppointments();
+              fetchAppointmentsFuture.then((value) => {setState(() {})});
             } else {
               showSnackBar("Could not update");
             }
