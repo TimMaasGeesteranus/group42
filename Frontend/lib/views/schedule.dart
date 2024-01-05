@@ -26,6 +26,7 @@ class ScheduleWidget extends StatefulWidget {
 class _ScheduleWidgetState extends State<ScheduleWidget> {
   ReservationsDataSource source = ReservationsDataSource();
   Duration defaultDuration = const Duration(hours: 1);
+  CalendarController calendarController = CalendarController();
 
   /// This future will complete with the reservations fetched from the backend.
   late Future<List<Appointment>?> fetchAppointmentsFuture;
@@ -69,11 +70,25 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                       TextButton(
                           onPressed: changeDefaultDuration,
                           child: Text(
-                              "Change duration: ${durationToHoursMinutes(defaultDuration)}"))
+                              "Change duration: ${durationToHoursMinutes(defaultDuration)}")),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      TextButton(
+                          onPressed: () {
+                            setState(() {
+                              calendarController.view =
+                                  (calendarController.view == CalendarView.week
+                                      ? CalendarView.day
+                                      : CalendarView.week);
+                            });
+                          },
+                          child: const Text("Toggle view")),
                     ],
                   ),
                   Expanded(
                     child: SfCalendar(
+                      controller: calendarController,
                       view: CalendarView.week,
                       onTap: _onTap,
                       dataSource: source,
