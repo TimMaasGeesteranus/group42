@@ -2,6 +2,7 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:ho_pla/util/ho_pla_scaffold.dart';
 import 'package:ho_pla/util/ho_pla_theme.dart';
+import 'package:ho_pla/util/widget_with_role.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsWidget extends StatefulWidget {
@@ -28,17 +29,19 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                     Icons.person,
                     size: 100,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 30, bottom: 10),
-                    child: Container(
-                      color: Theme.of(context).cardColor,
-                      child: ThemeSwitcher(builder: (context) {
-                        return CheckboxListTile(
-                          value: darkMode,
-                          onChanged: (x) => switchTheme(context, x),
-                          title: const Text("Dark mode"),
-                        );
-                      }),
+                  WidgetWithRole(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 30, bottom: 10),
+                      child: Container(
+                        color: Theme.of(context).cardColor,
+                        child: ThemeSwitcher(builder: (context) {
+                          return CheckboxListTile(
+                            value: darkMode,
+                            onChanged: (x) => switchTheme(context, x),
+                            title: const Text("Dark mode"),
+                          );
+                        }),
+                      ),
                     ),
                   )
                 ],

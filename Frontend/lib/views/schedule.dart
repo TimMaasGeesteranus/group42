@@ -6,7 +6,7 @@ import 'package:ho_pla/model/reservation.dart';
 import 'package:ho_pla/util/backend.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:ho_pla/util/duration_util.dart';
-import 'package:ho_pla/views/devices_overview.dart';
+import 'package:ho_pla/util/widget_with_role.dart';
 import 'package:ho_pla/views/qr_code.dart';
 import 'package:ho_pla/views/update_reservation.dart';
 import 'package:http/http.dart';
@@ -56,15 +56,19 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                 children: [
                   Wrap(
                     children: [
-                      TextButton(
-                          onPressed: onMessageButtonClicked,
-                          child: const Text("Notify last user")),
+                      WidgetWithRole(
+                        child: TextButton(
+                            onPressed: onMessageButtonClicked,
+                            child: const Text("Notify last user")),
+                      ),
                       const SizedBox(
                         width: 10,
                       ),
-                      TextButton(
-                          onPressed: onQrCodeGenerationClicked,
-                          child: const Text("Generate QR Code")),
+                      WidgetWithRole(
+                        child: TextButton(
+                            onPressed: onQrCodeGenerationClicked,
+                            child: const Text("Generate QR Code")),
+                      ),
                       const SizedBox(
                         width: 10,
                       ),
