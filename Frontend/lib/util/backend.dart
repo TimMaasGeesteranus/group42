@@ -150,6 +150,18 @@ class Backend {
     );
   }
 
+  static Future<http.Response> deleteDevice(
+      String itemId) {
+
+    return http.delete(
+      Uri.parse('$host/items/delete_item/$itemId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'accept': '*/*',
+      },
+    );
+  }
+
   static Future<http.Response> createHouse(
       int userId, String name, bool hasPremium) {
     final jsonData = {
