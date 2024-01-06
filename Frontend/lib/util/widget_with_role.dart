@@ -1,13 +1,16 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'backend.dart';
 
 class WidgetWithRole extends StatefulWidget {
-  const WidgetWithRole({super.key, required this.child});
+  const WidgetWithRole({super.key, required this.child, this.inverse = false});
 
   final Widget child;
+  final bool inverse;
 
   @override
   State<StatefulWidget> createState() => _WidgetWithRoleState();
@@ -51,10 +54,17 @@ class _WidgetWithRoleState extends State<WidgetWithRole> {
 
   @override
   Widget build(BuildContext context) {
-    if (isAdmin) {
-      return widget.child;
+    if (!widget.inverse) {
+      if (isAdmin) {
+        return widget.child;
+      }
+      return Container();
+    } else {
+      if (!isAdmin) {
+        return widget.child;
+      }
+      return Container();
     }
-    return Container();
   }
 
   void showError(String message) {
