@@ -53,7 +53,10 @@ class _DevicesOverviewWidgetState extends State<DevicesOverviewWidget> {
           children: [
             Row(
               children: [
-                Text(notifier.house.name),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text("House name ${notifier.house.name}"),
                 const Spacer(),
                 IconButton(
                     onPressed: onInformationButtonClicked,
