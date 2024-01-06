@@ -95,11 +95,38 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
                       onLongPress: _onLongPress,
                     ),
                   ),
+
+                  TextButton(
+                      onPressed: onDeleteButtonClicked,
+                      child: Text(
+                          "Delete item")),
+
                 ],
               );
             }
           },
         ));
+  }
+
+  void onDeleteButtonClicked() async { //TODO create deleteButton and get itemId
+    String itemId = widget.item.id.toString();
+    debugPrint(itemId);
+
+      try {
+        debugPrint("tyring");
+        var res = await Backend.deleteDevice(itemId);
+
+        if (res.statusCode == 204) {
+          debugPrint("Item successfully deleted");
+
+          return;
+        } else {
+          debugPrint('Could not delete the item: status ${res.statusCode}');
+        }
+      } on Exception catch (e, _) {
+        debugPrint('Error deleting the device. Try again later');
+      }
+
   }
 
   void onQrCodeGenerationClicked() {
