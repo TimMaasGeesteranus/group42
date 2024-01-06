@@ -6,6 +6,7 @@ import 'package:ho_pla/model/reservation.dart';
 import 'package:ho_pla/util/backend.dart';
 import 'package:ho_pla/util/current_user.dart';
 import 'package:ho_pla/util/duration_util.dart';
+import 'package:ho_pla/views/devices_overview.dart';
 import 'package:ho_pla/views/qr_code.dart';
 import 'package:ho_pla/views/update_reservation.dart';
 import 'package:http/http.dart';
@@ -110,7 +111,6 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
 
   void onDeleteButtonClicked() async { //TODO create deleteButton and get itemId
     String itemId = widget.item.id.toString();
-    debugPrint(itemId);
 
       try {
         debugPrint("tyring");
@@ -118,6 +118,7 @@ class _ScheduleWidgetState extends State<ScheduleWidget> {
 
         if (res.statusCode == 204) {
           debugPrint("Item successfully deleted");
+          Navigator.pop(context); // Navigate back
 
           return;
         } else {
