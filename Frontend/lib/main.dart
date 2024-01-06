@@ -80,6 +80,7 @@ class _MyAppState extends State<MyApp> {
           return MaterialApp(
             title: 'HoPla Demo',
             theme: myTheme,
+            debugShowCheckedModeBanner: false,
             navigatorKey: navigatorKey,
             home: firstWidget,
           );
