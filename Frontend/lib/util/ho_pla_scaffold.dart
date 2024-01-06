@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ho_pla/util/widget_with_role.dart';
 import 'package:ho_pla/views/profile.dart';
 
 /// A basic scaffold. It only has a navigation button if a page can be popped.
@@ -37,17 +38,17 @@ class HoPlaScaffold extends StatelessWidget {
         body: Column(
           children: [
             Expanded(child: body),
-            Container(
-              width: 300,
+            WidgetWithRole(
+              inverse: true,
+              child: Container(
+                width: 300,
                 height: 50,
                 color: Colors.white,
-              child: const Center(
-                child: Text(
+                child: const Center(
+                    child: Text(
                   "Advertisement",
-                  style: TextStyle(
-                    color: Colors.black
-                  ),
-                )
+                  style: TextStyle(color: Colors.black),
+                )),
               ),
             )
           ],
